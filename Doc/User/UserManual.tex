@@ -1,0 +1,74 @@
+\documentclass[12pt,notitlepage,twoside]{book}
+\usepackage{graphicx}
+\usepackage{mathptm}
+\usepackage{times}
+\usepackage{makeidx}
+\usepackage{url}
+\usepackage{supertabular}
+\usepackage{MyTitlepage}
+\pagestyle{headings}
+\makeindex
+\emergencystretch=50pt
+\begin{document}
+\title{Tk Session Manager \\ User Manual}
+\author{Robert Heller \\ Deepwoods Software \\ Wendell, MA, USA}
+\date{\today}
+\begin{titlepage}
+
+\maketitle
+
+\clearpage
+
+
+This documentation was prepared with \LaTeX.
+
+This document describes version 0 of the Tk Session Manager program.
+
+{\small Copyright \copyright 2010 by Robert Heller D/B/A Deepwoods Software}
+
+\vspace{.25in}
+
+All rights reserved.  Permission is granted to copy this document in
+electronic form only, so long as it is with the software it
+documents. 
+
+The author, Robert Heller, may be contacted electronically (E-Mail) via
+the following:
+
+\begin{description}
+\item[InterNet] heller@deepsoft.com
+\end{description}
+
+Web site URL: {\tt http://www.deepsoft.com/}.
+
+\thispagestyle{empty}
+\setcounter{page}{0}
+\clearpage
+
+\end{titlepage}
+
+
+\pagenumbering{roman}
+\tableofcontents
+\listoffigures
+\listoftables
+\cleardoublepage
+%       
+%       
+\include{Preface}
+%
+\cleardoublepage
+\pagenumbering{arabic}
+%
+\include{Introduction}
+\include{Tutorial}
+\include{Reference}
+\include{Help}
+\include{UserManual_Version}
+{\footnotesize
+ \include{COPYING}
+}
+\cleardoublepage
+\printindex
+\end{document}
+
