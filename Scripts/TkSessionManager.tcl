@@ -33,6 +33,28 @@
 #*  
 #* 
 
+## @defgroup TkSessionManager TkSessionManager
+# @brief Tk Session Manager -- Manage X11 Sessions
+#
+# @section SYNOPSIS
+# TkSessionManager [X11 Resource Options]
+#
+# @section DESCRIPTION
+# Should be run as the last thing in a .xinitrc or .xsession script file.
+#
+# @section PARAMETERS
+# None.
+# @section FILES
+# 	\$HOME/.tksessionmanagerrc	Preferences
+# @section AUTHOR
+# Robert Heller \<heller\@deepsoft.com\>
+#
+
+
+
+
+
+
 #puts stderr "***  argv0: $argv0"
 #set argv0 [file join [file dirname [info nameofexecutable]] TkSessionManager]
 #set argv0 [file dirname [info nameofexecutable]]
@@ -63,6 +85,8 @@ set HelpDir [file join [file dirname [file dirname [file dirname \
                                                         [info script]]]] Help]
 
 namespace eval TKSessionManager {
+
+  variable CheckScreenSaverCount 0
 
   TKSessionPreferences::Preferences readpreferencesfile  
 
@@ -278,6 +302,61 @@ proc TKSessionManager::ReloadMenu {} {
 				menuFilename MenuFilename]"
 }
 
+proc TKSessionManager::Startup {} {
+  variable Main
+  variable Text
+  set windowmanager "[TKSessionPreferences::Preferences get \
+			[winfo toplevel $Main] \
+			windowManager WindowManager]"
+  catch {exec $windowmanager &} result
+  $Text insert end "exec $windowmanager: $result\n"
+  set gnomeSettingsDaemonP "[TKSessionPreferences::Preferences get \
+				[winfo toplevel $Main] \
+				gnomeSettingsDaemon GnomeSettingsDaemon]"
+  if {$gnomeSettingsDaemonP} {
+    if {![catch {exec /usr/libexec/gnome-settings-daemon &} result]} {
+      $Text insert end "exec /usr/libexec/gnome-settings-daemon: $result\n"
+      set gnomeScreensaverP "[TKSessionPreferences::Preferences get \
+				[winfo toplevel $Main] \
+				gnomeScreensaver GnomeScreensaver]"
+      if {!$gnomeScreensaverP} {
+        after 1000 TKSessionManager::CheckScreenSaver
+      }
+    } else {
+      $Text insert end "exec /usr/libexec/gnome-settings-daemon: $result\n"
+    }
+  }
+  set sessionScript "[TKSessionPreferences::Preferences get \
+			[winfo toplevel $Main] \
+			sessionScript SessionScript]"
+  if {[catch {open "|$sessionScript" r} pipefp]} {
+    $Text insert end "open |$sessionScript r: $pipefp\n"
+    return
+  }
+  fileevent $pipefp readable [list TKSessionManager::readpipe $pipefp]  
+}
+
+proc TKSessionManager::CheckScreenSaver {} {
+  variable CheckScreenSaverCount
+  incr CheckScreenSaverCount
+  if {$CheckScreenSaverCount > 100} {return}
+  if {[catch {exec ps ux | grep -v grep | grep -q gnome-screensaver}]} {
+    after 1000 TKSessionManager::CheckScreenSaver
+  } else {
+    catch {exec killall gnome-screensaver}
+  }
+}
+
+proc TKSessionManager::readpipe {pipefp} {
+  variable Text
+  if {[gets $pipefp line] < 0} {
+    catch {close $pipefp}
+  } else {
+    $Text insert end "$line\n"
+    $Text see end
+  }
+}
+
 proc TKSessionManager::EditPreferences {} {
   variable Main
   TKSessionPreferences::Preferences edit -parent $Main
@@ -300,5 +379,6 @@ proc TKSessionManager::Hibernate {} {
   exec /usr/bin/pm-hibernate
 }
 
-   
 TKSessionManager::ReloadMenu
+TKSessionManager::Startup
+

@@ -77,7 +77,17 @@ namespace eval TKSessionPreferences {
     typecomponent    menuFilenameB
     typecomponent  printCommandLE;#	print command
     typecomponent  pipeNameLE;#		pipe name
-    typevariable _labelWidth 15
+    typecomponent  windowManagerLF
+    typecomponent    windowManagerE;#	window manager program
+    typecomponent    windowManagerB
+    typecomponent  sessionScriptLF
+    typecomponent    sessionScriptE;#	session script
+    typecomponent    sessionScriptB
+    typecomponent  gnomeSettingsDaemonLF
+    typecomponent    gnomeSettingsDaemonCB;# gnome-settings-daemon ?
+    typecomponent  gnomeScreensaverLF
+    typecomponent    gnomeScreensaverCB;#    gnome-screensaver ?
+    typevariable _labelWidth 30
 
     typeconstructor {
       set _preferencesfile [file join ~ .[string tolower [tk appname]]rc]
@@ -132,10 +142,71 @@ namespace eval TKSessionPreferences {
       pack  $pipeNameLE -fill x
       set _preferences(*PipeName) [list pipeName PipeName \
 			$::tcl_platform(user)_TkSessionManager $pipeNameLE {}]
+
+
+      set windowManagerLF [LabelFrame::create $frame.windowManagerLF \
+						     -text "Window Manager:" \
+						     -width $_labelWidth]
+      pack $windowManagerLF -fill x
+      set windowManagerLFfr [$windowManagerLF getframe]
+      set windowManagerE [Entry::create $windowManagerLFfr.windowManagerE]
+      pack $windowManagerE -side left -fill x -expand yes
+      set windowManagerB [Button::create $windowManagerLFfr.windowManagerB \
+				-text "Browse" \
+				-command [mytypemethod _BrowseWindowManagerFiles]]
+      pack $windowManagerB -side right
+      set _preferences(*WindowManager) [list windowManager WindowManager \
+					/usr/bin/fvwm $windowManagerE {}]
+      
+      set sessionScriptLF [LabelFrame::create $frame.sessionScriptLF \
+						     -text "Session Script:" \
+						     -width $_labelWidth]
+      pack $sessionScriptLF -fill x
+      set sessionScriptLFfr [$sessionScriptLF getframe]
+      set sessionScriptE [Entry::create $sessionScriptLFfr.sessionScriptE]
+      pack $sessionScriptE -side left -fill x -expand yes
+      set sessionScriptB [Button::create $sessionScriptLFfr.sessionScriptB \
+				-text "Browse" \
+				-command [mytypemethod _BrowseSessionScriptFiles]]
+      pack $sessionScriptB -side right
+      set _preferences(*SessionScript) [list SessionScript sessionScript \
+					{~/tkSessionManager.session} \
+					$sessionScriptE {}]
+      set gnomeSettingsDaemonLF [LabelFrame::create \
+					$frame.gnomeSettingsDaemonLF \
+					-text "Run Gnome Settings Daemon?" \
+					-width $_labelWidth]
+      pack $gnomeSettingsDaemonLF -fill x
+      set gnomeSettingsDaemonLFfr [$gnomeSettingsDaemonLF getframe]
+      set gnomeSettingsDaemonCB [ComboBox::create \
+				$gnomeSettingsDaemonLFfr.gnomeSettingsDaemonCB \
+				-editable no -values {yes no}]
+      pack $gnomeSettingsDaemonCB -side left -fill x -expand yes
+      $gnomeSettingsDaemonCB setvalue first
+      set _preferences(*GnomeSettingsDaemon) [list GnomeSettingsDaemon \
+						   gnomeSettingsDaemon yes \
+						   $gnomeSettingsDaemonCB {}]
+
+      set gnomeScreensaverLF [LabelFrame::create \
+					$frame.gnomeScreensaverLF \
+					-text "Run Gnome Screen Saver?" \
+					-width $_labelWidth]
+      pack $gnomeScreensaverLF -fill x
+      set gnomeScreensaverLFfr [$gnomeScreensaverLF getframe]
+      set gnomeScreensaverCB [ComboBox::create \
+				$gnomeScreensaverLFfr.gnomeScreensaverCB \
+				-editable no -values {yes no}]
+      pack $gnomeScreensaverCB -side left -fill x -expand yes
+      $gnomeScreensaverCB setvalue last
+      set _preferences(*GnomeScreensaver) [list GnomeScreensaver \
+						   gnomeScreensaver no \
+						   $gnomeScreensaverCB {}]
+
       foreach pattern [array names _preferences] {
         foreach {name class default widget configscript} \
 				"$_preferences($pattern)" {break}
 	option add $pattern "$default" widgetDefault
+	$widget configure -text "$default"
       }
     }
     typemethod _defaultprintcmd {} {
@@ -153,6 +224,23 @@ namespace eval TKSessionPreferences {
 				  -initialfile "[$menuFilenameE cget -text]"]
       if {[string length "$newfile"] > 0} {
 	$menuFilenameE configure -text "$newfile"
+      }
+    }
+    typemethod _BrowseWindowManagerFiles {} {
+      set newfile [tk_getOpenFile -parent $dialog -title "Window Manager" \
+				  -initialdir /usr/bin
+				  -initialfile "[$windowManagerE cget -text]"]
+      if {[string length "$newfile"] > 0} {
+	$windowManagerE configure -text "$newfile"
+      }
+    }
+    typemethod _BrowseSessionScriptFiles {} {
+      set newfile [tk_getOpenFile -parent $dialog -title "Session Script Filename" \
+				  -defaultextension {} \
+				  -initialdir  "$::env(HOME)" \
+				  -initialfile "[$sessionScriptE cget -text]"]
+      if {[string length "$newfile"] > 0} {
+	$sessionScriptE configure -text "$newfile"
       }
     }
     typemethod _OK {} {

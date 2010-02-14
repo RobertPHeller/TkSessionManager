@@ -261,7 +261,7 @@ namespace eval TKSessionCommandMenu {
       $dialog add -name ok     -text OK     -command [mytypemethod _OK]
       $dialog add -name apply  -text Save   -command [mytypemethod _Save]
       $dialog add -name cancel -text Cancel -command [mytypemethod _Cancel]
-      $dialog add -name help   -text Help   -command [list ::HTMLHelp::HTMLHelp help "Edit Menu"]
+      $dialog add -name help   -text Help   -command [list ::HTMLHelp::HTMLHelp help "Edit Command Menu"]
       set frame [$dialog getframe]
       set menuFilenameLF [LabelFrame::create $frame.menuFilenameLF \
 						     -text "Menu Filename:" \
