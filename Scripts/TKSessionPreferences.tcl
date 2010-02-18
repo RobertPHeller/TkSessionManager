@@ -58,6 +58,8 @@ namespace eval TKSessionPreferences {
 	set value [$type get $window $name $class]
 	regsub -all {%value} "$configscript" "$value" script
 	catch {uplevel #0 $script}
+	puts stderr "*** $type configurepreferences: name = '$name', widget = '$widget', value = '$value'"
+	$widget configure -text "$value"
       }
     }
 
@@ -65,7 +67,9 @@ namespace eval TKSessionPreferences {
       option add "$pattern" "$value" $priority
     }
     typemethod get {window name class} {
-      return "[option get $window $name $class]"
+      set value "[option get $window $name $class]"
+      puts stderr "*** $type get: window = $window, name = $name, class = $class, value = '$value'"
+      return "$value"
     }
 
 
@@ -91,7 +95,10 @@ namespace eval TKSessionPreferences {
 
     typeconstructor {
       set _preferencesfile [file join ~ .[string tolower [tk appname]]rc]
-
+      set dialog {}
+    }
+    typemethod _createdialog {} {
+      if {"$dialog" ne "" && [winfo exists $dialog]} {return}
       set dialog [Dialog::create .editPreferencesDialog \
 			-title {Preferences} \
 			-transient yes -modal none \
@@ -169,7 +176,7 @@ namespace eval TKSessionPreferences {
 				-text "Browse" \
 				-command [mytypemethod _BrowseSessionScriptFiles]]
       pack $sessionScriptB -side right
-      set _preferences(*SessionScript) [list SessionScript sessionScript \
+      set _preferences(*SessionScript) [list sessionScript SessionScript \
 					{~/tkSessionManager.session} \
 					$sessionScriptE {}]
       set gnomeSettingsDaemonLF [LabelFrame::create \
@@ -183,8 +190,9 @@ namespace eval TKSessionPreferences {
 				-editable no -values {yes no}]
       pack $gnomeSettingsDaemonCB -side left -fill x -expand yes
       $gnomeSettingsDaemonCB setvalue first
-      set _preferences(*GnomeSettingsDaemon) [list GnomeSettingsDaemon \
-						   gnomeSettingsDaemon yes \
+      set _preferences(*GnomeSettingsDaemon) [list gnomeSettingsDaemon \
+						   GnomeSettingsDaemon \
+						   yes \
 						   $gnomeSettingsDaemonCB {}]
 
       set gnomeScreensaverLF [LabelFrame::create \
@@ -198,8 +206,9 @@ namespace eval TKSessionPreferences {
 				-editable no -values {yes no}]
       pack $gnomeScreensaverCB -side left -fill x -expand yes
       $gnomeScreensaverCB setvalue last
-      set _preferences(*GnomeScreensaver) [list GnomeScreensaver \
-						   gnomeScreensaver no \
+      set _preferences(*GnomeScreensaver) [list gnomeScreensaver \
+						   GnomeScreensaver \
+						   no \
 						   $gnomeScreensaverCB {}]
 
       foreach pattern [array names _preferences] {
@@ -295,6 +304,7 @@ namespace eval TKSessionPreferences {
       return [$dialog enddialog cancel]
     }
     typemethod edit {args} {
+      $type _createdialog
       set parent [from args -parent .]
       $dialog configure -parent $parent
       wm transient [winfo toplevel $dialog] [winfo toplevel $parent]
@@ -302,7 +312,7 @@ namespace eval TKSessionPreferences {
 	foreach {name class default widget configscript} \
 				"$_preferences($pattern)" {break}   
 	set value [$type get $parent $name $class]
-#	puts stderr "*** $type edit: name = '$name', widget = '$widget'"
+	puts stderr "*** $type edit: name = '$name', widget = '$widget', value = '$value'"
 	$widget configure -text "$value"
       }
       return [$dialog draw]

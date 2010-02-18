@@ -54,7 +54,7 @@
 
 
 #@Chapter:labelspinbox.tcl -- Labeled SpinBox megawidget
-#$Id: labelspinbox.tcl 761 2009-09-28 02:08:20Z heller $
+#$Id$
 # This is a specialized form of the LabelFrame widget containing a SpinBox
 # Widget.  Most of the resources from the LabelFrame and SpinBox widgets
 # are included in this widget.

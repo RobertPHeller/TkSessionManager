@@ -53,7 +53,7 @@
 
 #@Chapter:ReadConfiguration.tcl -- Read Configuration Files.
 #@Label:ReadConfiguration.tcl
-#$Id: ReadConfiguration.tcl 761 2009-09-28 02:08:20Z heller $
+#$Id$
 
 package require snit;#			Load the Snit package.
 package require BWidget;#		Load the BWidget code

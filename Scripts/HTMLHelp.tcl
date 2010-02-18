@@ -11,7 +11,7 @@
 #* Contents:
 #* ------------------------------------------------------------------
 #*  
-#*  $Id: HTMLHelp.tcl 761 2009-09-28 02:08:20Z heller $
+#*  $Id$
 #* 
 #* Simple HTML display library by Stephen Uhler (stephen.uhler@sun.com)
 #* Copyright (c) 1995 by Sun Microsystems
@@ -81,7 +81,7 @@
 
 #@Chapter:HTMLHelp.tcl -- HTML Help Dialog
 #@Label:HTMLHelp.tcl
-#$Id: HTMLHelp.tcl 761 2009-09-28 02:08:20Z heller $
+#$Id$
 # This file contains code to create a HTML Help dialog.  It uses code 
 # originally written by Stephen Uhler and modified by Clif Flynt
 # (htmllib 0.3 through 0.3.4).  I have modified it further and embedded

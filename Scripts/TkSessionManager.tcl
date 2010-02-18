@@ -40,19 +40,70 @@
 # TkSessionManager [X11 Resource Options]
 #
 # @section DESCRIPTION
-# Should be run as the last thing in a .xinitrc or .xsession script file.
+# This program is an X11 Session Manager program.  It is started as the
+# last or only  command in a .xinitrc or .xsession script file.  It
+# provides a user definable menu of commands to be launched.  It also 
+# provides a text area that can be used for (electronic) note taking.  
+# The contents of the text area can be edited, saved, cleared, copied to
+# the X11 copy buffer, and printed.
+# 
+# It does the following on startup:
+# -# Creates a pipe in /tmp that it reads text from.  This text is
+#    displayed on the Session Manager's text area. This pipe is also
+#    bound to stdout and stderr of the processes launched by from the
+#    user defined menu.
+# -# Starts up the window manager.
+# -# Optionally starts the Gnome Settings Daemon.
+# -# Runs a session script which launches an initial set of programs.
+# .
+#
+# Also included is an Actions menu containing menu items that perform
+# system-level actions.
 #
 # @section PARAMETERS
 # None.
+# @section RESOURCES
+# The main window class is @b Tksessionmanager.  Resources can be in either
+# the X11 option database or in the preferences resource file.
+#
+# @arg @b mainTitle (class @b MainTitle) @n
+#	Specifies the main title.  The default is "TK Session Manager".
+# @arg @b mainGeometry (class @b MainGeometry) @n
+#	Specifies the size and placement of the session manager window.
+#	The default is to use the natural size and to center the window
+#	on the screen.
+# @arg @b menuFilename (class @b MenuFilename) @n
+#	Specifies the name of the file containing the commands menu.
+#	The default is \$HOME/tkSessionManager.menu.
+# @arg @b printCommand (class @b PrintCommand) @n
+#	Specifies the command to use to print the contents of the
+#	session manager's text area.  Should be a command that can take
+#	a plain text stream on its stdin. Defaults to lp or lpr.
+# @arg @b pipeName (class @b PipeName) @n
+#	Specifies the name of the pipe created in the /tmp directory.
+#	Text written to this pipe is displayed on the session manager's
+#	text area.  The default is \${USER}_TkSessionManager.
+# @arg @b windowManager (class @b WindowManager) @n
+#	Specifies the path to the window manager program to start. 
+#	Defaults to /usr/bin/fvwm.
+# @arg @b sessionScript (class @b SessionScript) @n
+#	Session startup script to run.  This stript contains the
+#	commands to start up the initial set of processes for the user's
+#	session. The default is \$HOME/tkSessionManager.session.
+# @arg @b gnomeSettingsDaemon (class @b GnomeSettingsDaemon) @n
+#	Flag to specify if the Gnome Settings Daemon should be started.
+#	This might be needed to allow theme settings for GTK+ 2
+#	programs. The default is yes.
+# @arg @b gnomeScreensaver (class @b GnomeScreensaver) @n
+#	Flag to specify if the Gnome Screensaver should be allowed
+#	to run.  The Gnome Settings Daemon forks the Gnome Screensaver,
+#	which may not be desirable.  The default is no.
+#	
 # @section FILES
-# 	\$HOME/.tksessionmanagerrc	Preferences
+# 	\$HOME/.tksessionmanagerrc		Preference resources
 # @section AUTHOR
 # Robert Heller \<heller\@deepsoft.com\>
 #
-
-
-
-
 
 
 #puts stderr "***  argv0: $argv0"
@@ -146,7 +197,7 @@ namespace eval TKSessionManager {
 	{command "Hibernate" {actions:hibernate} {Hibernate to disk} {} \
 			-command TKSessionManager::Hibernate -state disabled}
 	}
-    }]
+    } -options {} -view {}]
 
   variable Status {}
   variable Main [MainFrame::create .main -menu $Menu \
@@ -170,6 +221,8 @@ namespace eval TKSessionManager {
   set helpmenu [$Main getmenu help]
   $helpmenu delete "On Keys..."
   $helpmenu delete "Index..."  
+  $helpmenu delete "On Context..."
+  $helpmenu delete "On Window..."
   $helpmenu add command -label "Reference Manual" \
 		-command [list ::HTMLHelp::HTMLHelp help "Reference Manual"]
   $helpmenu entryconfigure "On Help..." \
@@ -359,7 +412,7 @@ proc TKSessionManager::readpipe {pipefp} {
 
 proc TKSessionManager::EditPreferences {} {
   variable Main
-  TKSessionPreferences::Preferences edit -parent $Main
+  TKSessionPreferences::Preferences edit -parent [winfo toplevel $Main]
 }
 
 proc TKSessionManager::EditMenu {} {

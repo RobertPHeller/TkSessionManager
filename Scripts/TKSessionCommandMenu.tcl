@@ -133,7 +133,11 @@ namespace eval TKSessionCommandMenu {
 	  }
 	}
 	newcommand {
-	  set iscascade [lindex [$options(-tree) itemcget $options(-treeid) -data] 1]
+	  if {"$options(-treeid)" eq "root"} {
+	    set iscascade yes
+	  } else {
+	    set iscascade [lindex [$options(-tree) itemcget $options(-treeid) -data] 1]
+	  }
 	  if {$iscascade} {
 	    set parent $options(-treeid)
 	    set index end
@@ -146,7 +150,11 @@ namespace eval TKSessionCommandMenu {
 		-data [list "[$commandLE cget -text]" 0]
 	}
 	newcascade {
-	  set iscascade [lindex [$options(-tree) itemcget $options(-treeid) -data] 1]
+	  if {"$options(-treeid)" eq "root"} {
+	    set iscascade yes
+	  } else {
+	    set iscascade [lindex [$options(-tree) itemcget $options(-treeid) -data] 1]
+	  }
 	  if {$iscascade} {
 	    set parent $options(-treeid)
 	    set index end
@@ -253,6 +261,10 @@ namespace eval TKSessionCommandMenu {
     }
     typemethod menufiletypes {} {return $_menuFileTypes}
     typeconstructor {
+      set dialog {}
+    }
+    typemethod _createdialog {} {
+      if {"$dialog" ne "" && [winfo exists $dialog]} {return}
       set dialog [Dialog::create .editMenuDialog \
 			-title {Menu} \
 			-transient yes -modal none \
@@ -303,23 +315,30 @@ namespace eval TKSessionCommandMenu {
       $menuElementButtons add -name insert -text {Insert Cascade} \
 					   -command [mytypemethod _InsertCascade]
       $menuElementButtons add -name delete -text {Delete} \
-					   -command [mytypemethod _Delete]
+					   -command [mytypemethod _Delete] \
+					   -state disabled
       $menuElementButtons add -name properties -text {Properties} \
-					   -command [mytypemethod _Properties]
-      $menuElementButtons configure -state disabled
+					   -command [mytypemethod _Properties] \
+					   -state disabled
     }
     typemethod _InsertCommand {} {
       set sel [$menuTR selection get]
-      if {[llength $sel] == 0} {return}
-      set id [lindex $sel 0]
+      if {[llength $sel] == 0} {
+	set id root
+      } else {
+	set id [lindex $sel 0]
+      }
       TKSessionCommandMenu::MenuItemProperties showproperties \
 		-tree $menuTR -treeid $id -isnew newcommand \
 		-parent $dialog
     }
     typemethod _InsertCascade {} {
       set sel [$menuTR selection get]
-      if {[llength $sel] == 0} {return}
-      set id [lindex $sel 0]
+      if {[llength $sel] == 0} {
+	set id root
+      } else {
+	set id [lindex $sel 0]
+      }
       TKSessionCommandMenu::MenuItemProperties showproperties \
 		-tree $menuTR -treeid $id -isnew newcascade \
 		-parent $dialog
@@ -454,6 +473,7 @@ namespace eval TKSessionCommandMenu {
       return [$dialog enddialog cancel]
     }
     typemethod edit {args} {
+      $type _createdialog
       set parent [from args -parent .]
       $dialog configure -parent $parent
       wm transient [winfo  toplevel $dialog] [winfo toplevel $parent]
@@ -480,9 +500,11 @@ namespace eval TKSessionCommandMenu {
     typemethod _MenuSelectChanged {args} {
       set selection [$menuTR selection get]
       if {[llength $selection] == 0} {
-	$menuElementButtons configure -state disabled
+	$menuElementButtons itemconfigure delete -state disabled
+	$menuElementButtons itemconfigure properties -state disabled
       } else {
-	$menuElementButtons configure -state normal
+	$menuElementButtons itemconfigure delete -state normal
+	$menuElementButtons itemconfigure properties -state normal
       }
     }
   }  

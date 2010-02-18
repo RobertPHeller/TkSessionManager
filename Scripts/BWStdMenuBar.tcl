@@ -38,7 +38,7 @@
 
 #@Chapter:BWStdMenuBar.tcl -- Create standard menubars
 #@Label:BWStdMenuBar.tcl
-#$Id: BWStdMenuBar.tcl,v 1.1 2006/02/06 00:20:44 heller Exp $
+#$Id$
 # This file contains code to create a standard Motif style menubar.
 # A standard menubar contains ``File'', ``Edit'', ``View'', ``Options'',
 # and ``Help'' pulldown menus.  The ``File'', ``Edit'', and ``Help'' menus
@@ -139,12 +139,13 @@ proc StdMenuBar::MakeMenu {args} {
       set menu [lreplace $menu [expr $index + 1] [expr $index + 1] $value]
     }
   }
-#  puts stderr "*** StdMenuBar::MakeMenu: menu = $menu"
+  puts stderr "*** StdMenuBar::MakeMenu: menu = $menu"
   set result {}
   foreach {option value} $menu {
+    if {[llength $value] == 0} {continue}
     eval [concat lappend result $value]
   }
-#  puts stderr "*** StdMenuBar::MakeMenu: result = $result"
+  puts stderr "*** StdMenuBar::MakeMenu: result = $result"
   return $result
 }
 

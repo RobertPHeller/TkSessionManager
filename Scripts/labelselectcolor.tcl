@@ -41,7 +41,7 @@
 
 
 #@Chapter:labelselectcolor.tcl -- LabelSelectColor, a labeled color selector
-#$Id: labelselectcolor.tcl 761 2009-09-28 02:08:20Z heller $
+#$Id$
 #This package provides a BWidget style megawidget for selecting colors, in
 #the same style as a LabelEntry widget.
 #

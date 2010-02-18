@@ -1,7 +1,7 @@
 SUFFIXES        = .tcl .sty
 USERMAN_TEXS = UserManual.tex Preface.tex Introduction.tex Tutorial.tex \
-                Reference.tex Help.tex COPYING.tex DialogBoxes.tex
-USERMAN_FIGS = 
+                Reference.tex Help.tex COPYING.tex
+USERMAN_FIGS = PreferencesEditor.png MenuEditor.png MainWindowAnnotated.png
 USERMAN = UserManual
 USERMAN_PDF = $(USERMAN).pdf
 USERMANHBase = UserManual

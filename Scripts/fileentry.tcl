@@ -50,7 +50,7 @@
 #* 
 
 #@Chapter:fileentry.tcl -- Labeled file entry megawidget.
-#$Id: fileentry.tcl 761 2009-09-28 02:08:20Z heller $
+#$Id$
 # This is a specialized form of the LabelEntry widget intended for selecting
 # file names.  A button is included to the right of the entry that pops up
 # a file selection dialog.  Many of the resources from LabelFrame, Entry, and 
