@@ -52,6 +52,7 @@ namespace eval TKSessionPreferences {
       catch {option readfile $_preferencesfile startupFile}
     }
     typemethod configurepreferences {{window .}} {
+      $type _createdialog
       foreach pattern [array names _preferences] {
 	foreach {name class default widget configscript} \
 				"$_preferences($pattern)" {break}   

@@ -1087,6 +1087,7 @@ namespace eval HTMLHelp {
     proc HMtag_a {selfns win param text} {
 	upvar #0 HM$win var
 
+	puts stderr "*** $selfns proc HMtag_a: param = $param"
 	# a source
 
 	if {[HMextract_param $param href]} {
@@ -1107,6 +1108,16 @@ namespace eval HTMLHelp {
 			set var(going) $name
 		}
 	}
+	if {[HMextract_param $param id]} {
+		set var(Tname) [list N:$id]
+		HMstack $win "" "Tanchor anchor"
+		$win mark set N:$id "$var(S_insert) - 1 chars"
+		$win mark gravity N:$id left
+		if {[info exists var(goto)] && $var(goto) == $id} {
+			unset var(goto)
+			set var(going) $id
+		}
+	}
     }
 
     # The application should call here with the fragment name
@@ -1115,10 +1126,12 @@ namespace eval HTMLHelp {
     # otherwise schedule the goto to happen when we see the reference.
 
     proc HMgoto {selfns win where {callback HMwent_to}} {
+	puts stderr "*** $selfns proc HMgoto: where = $where"
         if {{HMwent_to} eq "$callback"} {
 	  set callback [myproc HMwent_to $selfns]
 	}
 	upvar #0 HM$win var
+	puts stderr "*** $selfns proc HMgoto: $win mark names is [$win mark names]"
 	if {[regexp N:$where [$win mark names]]} {
 		$win see N:$where
 		update

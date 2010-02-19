@@ -212,12 +212,6 @@ namespace eval TKSessionManager {
   pack $Text -expand yes -fill both
   $scrollw setwidget $Text
   bind $Text <<Selection>> {TKSessionManager::SelectionChanged %W}
-  global env
-  if {[catch {set env(TMPDIR} TMPDIR]} {set TMPDIR /tmp}
-  set pipename [file join $TMPDIR \
-  "[TKSessionPreferences::Preferences get [winfo toplevel $Main] pipeName PipeName]"]
-  variable Pipe [TKSessionPipeIO::Pipe %AUTO% -textoutput $Text -name $pipename]
-  TKSessionCommandMenu::CommandMenu setpipe $Pipe
   set helpmenu [$Main getmenu help]
   $helpmenu delete "On Keys..."
   $helpmenu delete "Index..."  
@@ -258,7 +252,14 @@ namespace eval TKSessionManager {
 	{{All Files} * TEXT}
   }
 
+  update idle
   TKSessionPreferences::Preferences configurepreferences
+  global env
+  if {[catch {set env(TMPDIR} TMPDIR]} {set TMPDIR /tmp}
+  set pipename [file join $TMPDIR \
+  "[TKSessionPreferences::Preferences get [winfo toplevel $Main] pipeName PipeName]"]
+  variable Pipe [TKSessionPipeIO::Pipe %AUTO% -textoutput $Text -name $pipename]
+  TKSessionCommandMenu::CommandMenu setpipe $Pipe
   if {[catch {exec /usr/bin/pm-is-supported --suspend}] == 0} {
     $Main setmenustate actions:suspend normal
   }

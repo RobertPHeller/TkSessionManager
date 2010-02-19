@@ -77,7 +77,7 @@ Menu & Edit Menu. \\
 The \texttt{Edit} menu contains, in addition to the standard edit
 functions of cut; copy; paste; clear; delete; select all; deselect all,
 menu items to edit the preferences (see
-Section~\ref{sect:ItemProperties}) and the commands menu (see
+Section~\ref{sect:EditPreferences}) and the commands menu (see
 Section~\ref{sect:EditCommandMenu}), as described in Table~\ref{ref:tab:editmenu}.
 
 The \texttt{Commands} menu is completely user defined.  This menu is
@@ -204,6 +204,8 @@ inserting new commands and cascades, a button to delete a command or
 cascade, and a button for showing (and editing) the properties of a
 command or cascade.  
 
+\subsection{Item Properties}
+\label{sect:ItemProperties}
 \begin{figure}[hbpt] 
 \begin{centering}
 \includegraphics{CommandPropertiesAnnotated.png} 
@@ -226,18 +228,67 @@ command properties window, there is a command path that can be edited.
 The edits in these windows can be saved by clicking the OK button or the
 changes can be discarded by clicking the Cancel button.
 
+\subsection{Rearanging the order of menu items}
 
+The order of menu items can be rearanged by draging and dropping them
+to different locations in the menu tree.
 
-\section{Item Properties}
-\label{sect:ItemProperties}
+\section{Edit Preferences}
+\label{sect:EditPreferences}
 
 \begin{figure}[hbpt]
 \begin{centering}
-\includegraphics[width=5in]{PreferencesEditor.png}
-\caption{Preferences Editor Window.}
+\includegraphics[width=5in]{PreferencesEditorAnnotated.png}
+\caption{Preferences Editor Window, annotated.}
 \label{ref:fig:preferenceseditor}
 \end{centering}
 \end{figure}
-
-
+\begin{table}[hbpt]
+\begin{centering}
+\begin{tabular}{|l|l|p{3in}|}
+\hline
+Resource & Class & Description \\
+\hline
+\hline
+mainTitle &MainTitle & Specifies the main title.  The default is ``TK Session Manager''.\\
+\hline
+mainGeometry & MainGeometry & Specifies the size and placement of the session manager window.
+	The default is to use the natural size and to center the window
+	on the screen.\\
+\hline
+menuFilename & MenuFilename&	Specifies the name of the file containing the commands menu.
+	The default is \$HOME/tkSessionManager.menu.\\
+\hline
+printCommand & PrintCommand&	Specifies the command to use to print the contents of the
+	session manager's text area.  Should be a command that can take
+	a plain text stream on its stdin. Defaults to lp or lpr.\\
+\hline
+pipeName & PipeName&	Specifies the name of the pipe created in the /tmp directory.
+	Text written to this pipe is displayed on the session manager's
+	text area.  The default is \$\{USER\}\_TkSessionManager.\\
+\hline
+windowManager & WindowManager&	Specifies the path to the window manager program to start. 
+	Defaults to /usr/bin/fvwm.\\
+\hline
+sessionScript & SessionScript&	Session startup script to run.  This stript contains the
+	commands to start up the initial set of processes for the user's
+	session. The default is \$HOME/tkSessionManager.session.\\
+\hline
+gnomeSettingsDaemon & GnomeSettingsDaemon&	Flag to specify if the Gnome Settings Daemon should be started.
+	This might be needed to allow theme settings for GTK+ 2
+	programs. The default is yes.\\
+\hline
+gnomeScreensaver & GnomeScreensaver&	Flag to specify if the Gnome Screensaver should be allowed
+	to run.  The Gnome Settings Daemon forks the Gnome Screensaver,
+	which may not be desirable.  The default is no.\\
+\hline
+\end{tabular}
+\caption{Resources (preferences).}
+\label{ref:tab:resources}
+\end{centering}
+\end{table}
+The annotated preferences editor for the TkSessionManager is shown in
+Figure~\ref{ref:fig:preferenceseditor}. Each of the preference resources
+is displayed, one per row.  The resources themselfs are described in
+Table~\ref{ref:tab:resources}. 
 
