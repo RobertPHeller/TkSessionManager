@@ -51,4 +51,4 @@ $(USERMAN_HTML) : $(USERMAN_PDF)
 
 
 
-EXTRA_DIST = MyTitlepage.sty
+
