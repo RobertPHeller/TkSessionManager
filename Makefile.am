@@ -1,7 +1,7 @@
 SUBDIRS = BuildData BuildScripts Doc Scripts
 
 
-EXTRA_DIST = bootstrap Doxyfile.in
+EXTRA_DIST = bootstrap Doxyfile.in TkSessionManager.desktop
 
 TCLKIT = $(top_builddir)/BuildData/tclkit${BEXEEXT}
 
@@ -10,6 +10,9 @@ BUILT_SOURCES = $(TCLKIT)
 bin_SCRIPTS = TkSessionManager$(EXEEXT)
 
 man_MANS = man1/TkSessionManager.1
+
+desktopdir = $(datadir)/xsessions
+desktop_DATA = TkSessionManager.desktop
 
 if CROSSCOMPILING
 else

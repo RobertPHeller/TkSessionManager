@@ -95,7 +95,12 @@ namespace eval TKSessionPreferences {
     typevariable _labelWidth 30
 
     typeconstructor {
-      set _preferencesfile [file join ~ .[string tolower [tk appname]]rc]
+      set host_preferencesfile [file join ~ .[string tolower [tk appname]]rc-[exec hostname]]
+      if {[file readable $host_preferencesfile]} {
+	set _preferencesfile $host_preferencesfile
+      } else {
+        set _preferencesfile [file join ~ .[string tolower [tk appname]]rc]
+      }
       set dialog {}
     }
     typemethod _createdialog {} {
