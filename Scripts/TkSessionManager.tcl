@@ -368,16 +368,26 @@ proc TKSessionManager::Startup {} {
 				[winfo toplevel $Main] \
 				gnomeSettingsDaemon GnomeSettingsDaemon]"
   if {$gnomeSettingsDaemonP} {
-    if {![catch {exec /usr/libexec/gnome-settings-daemon &} result]} {
-      $Text insert end "exec /usr/libexec/gnome-settings-daemon: $result\n"
-      set gnomeScreensaverP "[TKSessionPreferences::Preferences get \
-				[winfo toplevel $Main] \
-				gnomeScreensaver GnomeScreensaver]"
-      if {!$gnomeScreensaverP} {
-        after 1000 TKSessionManager::CheckScreenSaver
-      }
+    set gnome_settings_daemon [auto_execok gnome-settings-daemon]
+    if {$gnome_settings_daemon eq ""} {
+        if {[file exists /usr/libexec/gnome-settings-daemon]} {
+            set gnome_settings_daemon /usr/libexec/gnome-settings-daemon
+        }
+    }
+    if {$gnome_settings_daemon ne ""} {
+        if {![catch {exec $gnome_settings_daemon &} result]} {
+            $Text insert end "exec $gnome_settings_daemon: $result\n"
+            set gnomeScreensaverP [TKSessionPreferences::Preferences get \
+                                   [winfo toplevel $Main] gnomeScreensaver \
+                                   GnomeScreensaver]
+            if {!$gnomeScreensaverP} {
+                after 1000 TKSessionManager::CheckScreenSaver
+            }
+        } else {
+            $Text insert end "exec $gnome_settings_daemon: $result\n"
+        }
     } else {
-      $Text insert end "exec /usr/libexec/gnome-settings-daemon: $result\n"
+        $Text insert end "gnome-settings-daemon not found, not starting it.\n"
     }
   }
   set sessionScript "[TKSessionPreferences::Preferences get \

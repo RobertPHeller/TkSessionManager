@@ -40,7 +40,7 @@ $(USERMAN_HTML) : $(USERMAN_PDF)
 	-rm -rf $(USERMANHBase)
 	-mkdir $(USERMANHBase)
 	$(HTLATEX) $(USERMAN) "html,2,info" "" "-d$(USERMANHBase)/"
-	(cd $(USERMANHBase)&&ln -s ../*.png ./)
+	(cd $(USERMANHBase)&&ln -sf ../*.png ./)
 	-rm -f zz$(USERMAN).p* $(USERMAN).4ct $(USERMAN).xref \
 		$(USERMAN).4tc tex4ht.fls $(USERMAN).tmp $(USERMAN).lg \
 		$(USERMAN).idv $(USERMAN).dvi $(USERMAN)*.html
