@@ -15,7 +15,11 @@ pkgdata_DATA = $(USERMAN_PDF)
 noinst_DATA  = $(USERMAN_HTML)
 
 CLEANFILES = UserManual.pdf *.aux *.bbl *.blg *.idx *.ilg \
-	*.ind *.lof *.lot *.lol *.toc *.css UserManual
+	*.ind *.lof *.lot *.lol *.toc *.css UserManual.log \
+	$(USERMAN)_Version.tex
+	
+clean-local:
+	-rm -rf $(USERMANHBase)
 
 $(USERMAN)_Version.tex : $(top_builddir)/config.status
 	echo '\chapter*{Version}'               >$(USERMAN)_Version.tex

@@ -4,6 +4,8 @@ EXTRA_DIST=Img-1.3-Mac-Universal.zip Img-1.3-Linux32.zip Img-1.3-Linux64.zip \
 
 BUILT_SOURCES = tclkit${BEXEEXT}
 
+CLEANFILES = $(BUILT_SOURCES)
+
 noinst_SCRIPTS = tclkit${BEXEEXT}
 
 EXTRA_SCRIPTS = tclkit-darwin-univ-aqua tclkit-linux-x86 tclkit-linux-x86_64 \

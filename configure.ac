@@ -7,7 +7,7 @@ AC_SUBST(build)
 AC_CANONICAL_TARGET
 AC_SUBST(target)
 
-AM_INIT_AUTOMAKE([TkSessionManager],1.0.0)
+AM_INIT_AUTOMAKE([TkSessionManager],1.0.1)
 
 if test "x${prefix}" = "xNONE"; then
     prefix=/usr/local

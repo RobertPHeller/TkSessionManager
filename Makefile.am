@@ -9,6 +9,8 @@ BUILT_SOURCES = $(TCLKIT)
 
 bin_SCRIPTS = TkSessionManager$(EXEEXT)
 
+CLEANFILES = $(bin_SCRIPTS)
+
 man_MANS = man1/TkSessionManager.1
 
 desktopdir = $(datadir)/xsessions
