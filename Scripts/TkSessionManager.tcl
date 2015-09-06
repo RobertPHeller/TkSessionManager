@@ -53,7 +53,7 @@
 #    bound to stdout and stderr of the processes launched by from the
 #    user defined menu.
 # -# Starts up the window manager.
-# -# Optionally starts the Gnome Settings Daemon.
+# -# Optionally starts the Gnome Settings Daemon and Dbus Daemon.
 # -# Runs a session script which launches an initial set of programs.
 # .
 #
@@ -98,6 +98,8 @@
 #	Flag to specify if the Gnome Screensaver should be allowed
 #	to run.  The Gnome Settings Daemon forks the Gnome Screensaver,
 #	which may not be desirable.  The default is no.
+# @arg @b dbusLaunch  (class @b DbusLaunch) @n
+#       Flag to specify if the Dbus Daemon should be launched.
 #	
 # @section FILES
 # 	\$HOME/.tksessionmanagerrc		Preference resources
@@ -364,6 +366,23 @@ proc TKSessionManager::Startup {} {
 			windowManager WindowManager]"
   catch {exec $windowmanager &} result
   $Text insert end "exec $windowmanager: $result\n"
+  set dbusLaunch "[TKSessionPreferences::Preferences get \
+                        [winfo toplevel $Main] \
+                        dbusLaunch DbusLaunch]"
+  if {$dbusLaunch} {
+      if {[catch {set ::env(DBUS_SESSION_BUS_ADDRESS)} DBUS_SESSION_BUS_ADDRESS]} {
+          if {![catch {exec dbus-launch --csh-syntax --exit-with-session} dbusinfo]} {
+              if {[regexp -line {^setenv[[:space:]]([^[:space:]]*)[[:space:]]'(.*)';$} $dbusinfo => name value] > 0} {
+                  set ::env($name) "$value"
+              }
+              if {[regexp -line {^set[[:space:]]([^=]*)=([[:digit:]]*);$} $dbusinfo => name value] > 0} {
+                  set ::env($name) "$value"
+              }
+          }
+      }
+  }
+
+    
   set gnomeSettingsDaemonP "[TKSessionPreferences::Preferences get \
 				[winfo toplevel $Main] \
 				gnomeSettingsDaemon GnomeSettingsDaemon]"

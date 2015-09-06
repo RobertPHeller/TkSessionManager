@@ -7,7 +7,7 @@ AC_SUBST(build)
 AC_CANONICAL_TARGET
 AC_SUBST(target)
 
-AM_INIT_AUTOMAKE([TkSessionManager],1.0.1)
+AM_INIT_AUTOMAKE([TkSessionManager],1.0.2)
 
 if test "x${prefix}" = "xNONE"; then
     prefix=/usr/local
@@ -100,6 +100,10 @@ case $target_os in
 	AC_SUBST(IMG_ZIP, Img-1.3-Linux32.zip)
 	AC_SUBST(TCLKITRUN, tclkit-linux-x86)
 	;;
+      arm*)
+        AC_SUBST(IMG_ZIP, Img-1.3-Linuxarmv7l.zip)
+        AC_SUBST(TCLKITRUN, tclkit-linux-armv7l)
+        ;;
       *)
 	AC_MSG_ERROR([Unsupported Linux arch: $target_cpu])
 	;;
@@ -133,6 +137,9 @@ case $build_os in
       i*86)
 	AC_SUBST(TCLKITBSRC, tclkit-linux-x86)
 	;;
+      arm*)
+        AC_SUBST(TCLKITBSRC, tclkit-linux-armv7l)
+        ;;
       *)
 	AC_MSG_ERROR([Unsupported Linux arch: $build_cpu])
 	;;
