@@ -100,6 +100,10 @@
 #	which may not be desirable.  The default is no.
 # @arg @b dbusLaunch  (class @b DbusLaunch) @n
 #       Flag to specify if the Dbus Daemon should be launched.
+# @arg @b quitManager (class @b QuitManager) @n
+#       Program to run on quiting.  Typically a program that manages logging 
+#       out a session manager or rebooting the system.  If absent, then quit
+#       just quits.
 #	
 # @section FILES
 # 	\$HOME/.tksessionmanagerrc		Preference resources
@@ -197,7 +201,9 @@ namespace eval TKSessionManager {
 	{command "Suspend" {actions:suspend} {Suspend to memory} {} 
 			-command TKSessionManager::Suspend -state disabled}
 	{command "Hibernate" {actions:hibernate} {Hibernate to disk} {} \
-			-command TKSessionManager::Hibernate -state disabled}
+                  -command TKSessionManager::Hibernate -state disabled}
+        {command "Shutdown" {actions:shutdown} {System Shutdown} {} \
+                  -command TKSessionManager::Shutdown -state disabled}
 	}
     } -options {} -view {}]
 
@@ -269,6 +275,13 @@ namespace eval TKSessionManager {
   if {[catch {exec /usr/bin/pm-is-supported --hibernate}] == 0} {
     $Main setmenustate actions:hibernate normal
   }
+  variable ShutdownManager [TKSessionPreferences::Preferences get \
+                            [winfo toplevel $Main] \
+                            shutdownManager ShutdownManager]
+  if {$ShutdownManager ne ""} {
+      $Main setmenustate actions:shutdown  normal
+  }
+                            
   wm deiconify $w
 }
 
@@ -276,15 +289,23 @@ namespace eval TKSessionManager {
 # Careful exit function.
 #*************************************
 proc TKSessionManager::CareFulExit {} {
-  if {[string compare \
-	[tk_messageBox -default no -icon question -message {Really Quit?} \
-		-title {Careful Exit} -type yesno] {yes}] == 0} {
-    variable Pipe
-    catch {$Pipe destroy}
-    set $Pipe {}
-    # And exit
-    exit
-  }
+    variable Main
+    set qm [TKSessionPreferences::Preferences get [winfo toplevel $Main] \
+            quitManager QuitManager]
+    if {$qm eq ""} {
+        if {[string compare \
+             [tk_messageBox -default no -icon question \
+              -message {Really Quit?} \
+              -title {Careful Exit} -type yesno] {yes}] == 0} {
+            variable Pipe
+            catch {$Pipe destroy}
+            set $Pipe {}
+            # And exit
+            exit
+        }
+    } else {
+        eval exec $qm
+    }
 }
 
 
@@ -461,6 +482,14 @@ proc TKSessionManager::Suspend {} {
 proc TKSessionManager::Hibernate {} {
   exec /usr/bin/pm-hibernate
 }
+
+proc TKSessionManager::Shutdown {} {
+    variable ShutdownManager
+    if {$ShutdownManager ne ""} {
+        eval exec $ShutdownManager
+    }
+}
+
 
 TKSessionManager::ReloadMenu
 TKSessionManager::Startup
