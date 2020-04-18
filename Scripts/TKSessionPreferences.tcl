@@ -49,7 +49,8 @@ namespace eval TKSessionPreferences {
     typevariable _preferencesfile 
 
     typemethod readpreferencesfile {} {
-      catch {option readfile $_preferencesfile startupFile}
+        puts stderr "TKSessionPreferences::Preferences readpreferencesfile: _preferencesfile is $_preferencesfile"
+        catch {option readfile $_preferencesfile startupFile}
     }
     typemethod configurepreferences {{window .}} {
       $type _createdialog
@@ -102,6 +103,7 @@ namespace eval TKSessionPreferences {
         set _preferencesfile [file join ~ .[string tolower [tk appname]]rc]
       }
       set dialog {}
+      puts stderr "*** TKSessionPreferences typeconstructor: _preferencesfile is $_preferencesfile"
     }
     typemethod _createdialog {} {
       if {"$dialog" ne "" && [winfo exists $dialog]} {return}
@@ -169,8 +171,7 @@ namespace eval TKSessionPreferences {
 				-command [mytypemethod _BrowseWindowManagerFiles]]
       pack $windowManagerB -side right
       set _preferences(*WindowManager) [list windowManager WindowManager \
-					/usr/bin/fvwm $windowManagerE {}]
-      
+					/bin/true $windowManagerE {}]
       set sessionScriptLF [LabelFrame::create $frame.sessionScriptLF \
 						     -text "Session Script:" \
 						     -width $_labelWidth]
@@ -183,7 +184,7 @@ namespace eval TKSessionPreferences {
 				-command [mytypemethod _BrowseSessionScriptFiles]]
       pack $sessionScriptB -side right
       set _preferences(*SessionScript) [list sessionScript SessionScript \
-					{~/tkSessionManager.session} \
+					{/bin/true} \
 					$sessionScriptE {}]
       set gnomeSettingsDaemonLF [LabelFrame::create \
 					$frame.gnomeSettingsDaemonLF \
@@ -198,7 +199,7 @@ namespace eval TKSessionPreferences {
       $gnomeSettingsDaemonCB setvalue first
       set _preferences(*GnomeSettingsDaemon) [list gnomeSettingsDaemon \
 						   GnomeSettingsDaemon \
-						   yes \
+						   no \
 						   $gnomeSettingsDaemonCB {}]
 
       set gnomeScreensaverLF [LabelFrame::create \
@@ -216,7 +217,19 @@ namespace eval TKSessionPreferences {
 						   GnomeScreensaver \
 						   no \
 						   $gnomeScreensaverCB {}]
-
+      set dbusLaunchLF [LabelFrame::create \
+                        $frame.dbusLaunchLF \
+                        -text "Launch dbus daemon?" \
+                        -width $_labelWidth]
+      pack $dbusLaunchLF -fill x
+      set dbusLaunchLFfr [$dbusLaunchLF getframe]
+      set dbusLaunchCB [ComboBox::create \
+                        $dbusLaunchLFfr.dbusLaunchCB \
+                        -editable no -values {yes no}]
+      pack $dbusLaunchCB -side left -fill x -expand yes
+      $dbusLaunchCB  setvalue last
+      set _preferences(*dbusLaunch) [list dbusLaunch DbusLaunch \
+                                     no $dbusLaunchCB no]
       foreach pattern [array names _preferences] {
         foreach {name class default widget configscript} \
 				"$_preferences($pattern)" {break}

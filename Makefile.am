@@ -1,4 +1,6 @@
-SUBDIRS = BuildData BuildScripts Doc Scripts
+ACLOCAL_AMFLAGS = -I m4
+
+SUBDIRS = BuildData BuildScripts Doc Scripts SigTrap
 
 
 EXTRA_DIST = bootstrap Doxyfile.in TkSessionManager.desktop
@@ -16,11 +18,6 @@ man_MANS = man1/TkSessionManager.1
 desktopdir = $(datadir)/xsessions
 desktop_DATA = TkSessionManager.desktop
 
-if CROSSCOMPILING
-else
-transform = 
-endif
-
 AllScripts = $(wildcard $(top_srcdir)/Scripts/*.tcl) $(wildcard Scripts/*.tcl)
 LibScripts = $(filter-out %TkSessionManager.tcl,$(AllScripts))
 AllImages  = $(wildcard $(top_srcdir)/Scripts/*.gif) \
@@ -28,7 +25,8 @@ AllImages  = $(wildcard $(top_srcdir)/Scripts/*.gif) \
 AllHelpDep = Doc/User/UserManual/UserManual.html
 AllHelpFiles = $(wildcard Doc/User/UserManual/*)
 
-TkSessionManager$(EXEEXT): $(AllScripts) $(AllImages) $(AllHelpDep)
+TkSessionManager$(EXEEXT): $(AllScripts) $(AllImages) $(AllHelpDep) \
+	SigTrap/sigtrap.la SigTrap/pkgIndex.tcl
 	-rm -rf TkSessionManager.vfs
 	$(TCLKIT) $(top_srcdir)/BuildScripts/sdx.kit qwrap \
 			$(srcdir)/Scripts/TkSessionManager.tcl
@@ -44,6 +42,10 @@ TkSessionManager$(EXEEXT): $(AllScripts) $(AllImages) $(AllHelpDep)
 		TkSessionManager lib/Common $(LibScripts)
 	$(TCLKIT) $(top_srcdir)/BuildScripts/MakePkgIndex.kit TkSessionManager \
 		Common
+	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitFile.kit -srcdir $(srcdir) \
+		TkSessionManager lib/SigTrap \
+		SigTrap/pkgIndex.tcl SigTrap/.libs/sigtrap$(SHLIB_SUFFIX)
+		
 	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitFile.kit -srcdir $(srcdir) \
 		TkSessionManager Images $(AllImages)
 	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitFile.kit -srcdir $(srcdir) \
@@ -68,6 +70,12 @@ Doc/User/UserManual/UserManual.html: FORCE
 man1/TkSessionManager.1 : Doxyfile Scripts/TkSessionManager.tcl
 	-rm -rf man1
 	$(DOXYGEN)
+
+SigTrap/sigtrap.la : FORCE
+	$(MAKE) -C $(top_builddir)/SigTrap sigtrap.la
+
+SigTrap/pkgIndex.tcl : FORCE
+	$(MAKE) -C $(top_builddir)/SigTrap pkgIndex.tcl
 
 clean-local:
 	-rm -rf man1

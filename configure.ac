@@ -1,5 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(Scripts/TkSessionManager.tcl)
+AC_CONFIG_MACRO_DIR([m4])
 
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
@@ -8,21 +9,13 @@ AC_CANONICAL_TARGET
 AC_SUBST(target)
 
 AM_INIT_AUTOMAKE([TkSessionManager],1.0.4)
-
 if test "x${prefix}" = "xNONE"; then
     prefix=/usr/local
 fi
 if test "x${exec_prefix}" = "xNONE"; then
     exec_prefix="${prefix}"
 fi
-
-dnl Force cross_compiling, even if it *looks* like we can run cross-built 
-dnl binaries (get around wine's cleverness).
-if test ${cross_compiling} = "maybe"; then
-  if test ${target_os} != ${build_os}; then
-    cross_compiling=yes
-  fi
-fi  
+PACKAGE_NAME="TkSessionManager"
 
 BUILD_DIR=`pwd`
 TOP_DIR=${BUILD_DIR}
@@ -45,42 +38,25 @@ AC_PATH_PROG(MAKEINDEX,makeindex,/bin/true)
 AC_PATH_PROG(BIBTEX,bibtex,/bin/true)
 AC_PATH_PROG(DVIPS,dvips,/bin/true)
 AC_PATH_PROG(PS2PDF,ps2pdf,/bin/true)
+m4_pattern_allow(PKG_)
+
+TEA_INIT([3.5])
+TEA_PATH_TCLCONFIG
+TEA_LOAD_TCLCONFIG
+TEA_PROG_TCLSH
+TEA_ENABLE_SHARED
+TEA_CONFIG_SYSTEM
+TEA_CONFIG_CFLAGS
+TEA_PUBLIC_TCL_HEADERS
+AC_SUBST(SHLIB_SUFFIX)
+AX_PKG_SWIG(1.3)
+AC_LIBTOOL_DLOPEN
+AM_PROG_LIBTOOL
 
 AC_PATH_PROGS(HOSTTCLSH,[tclsh8.4 tclsh])
 
-AC_MSG_CHECKING(bwidget dir)
-BWLIB=`echo 'puts $tcl_library'|${HOSTTCLSH}`
-dirs="${TCL_PREFIX}/lib/bwidget* ${TCL_PREFIX}/lib/tcllib*/bwidget* ${BWLIB}/bwidget* ${BWLIB}/../tcllib*/bwidget* ${BWLIB}/../bwidget* ${BWLIB}/tcllib*/bwidget*"
-for i in $dirs ; do
-  if test -d "$i" -a -f "$i/pkgIndex.tcl"; then
-    BWLIB=`cd $i; pwd`
-  fi
-done
-AC_ARG_WITH(bwlib, [  --with-bwlib=DIR          use BWidget from DIR], BWLIB=$withval,)
-if test -d $BWLIB; then
-   AC_MSG_RESULT([using BWidget library in $BWLIB])
-else
-   AC_MSG_ERROR(BWidget library directory $BWLIB doesn't exist)
-fi
-AC_SUBST(BWLIB)
-
-AC_MSG_CHECKING(snit dir)
-SNITLIB=`echo 'puts $tcl_library'|${HOSTTCLSH}`
-
-dirs="${TCL_PREFIX}/lib/snit* ${TCL_PREFIX}/lib/tcllib*/snit* ${SNITLIB}/../tcllib*/snit* ${SNITLIB}/../snit* ${SNITLIB}/tcllib*/snit* ${SNITLIB}/snit*"
-for i in $dirs ; do
-  if test -d "$i" -a -f "$i/pkgIndex.tcl"; then
-    SNITLIB=`cd $i; pwd`
-  fi
-done
-AC_ARG_WITH(snitlib, [  --with-snitlib=DIR          use snit from DIR], SNITLIB=$withval,)
-if test -d $SNITLIB; then
-   AC_MSG_RESULT([using snit library in $SNITLIB])
-else
-   AC_MSG_ERROR(Snit library directory $SNITLIB doesn't exist)
-fi
-AC_SUBST(SNITLIB)
-
+AX_BWIDGET
+AX_SNIT
 
 AC_PATH_PROGS(UNZIP,unzip)
 
@@ -172,6 +148,7 @@ AC_OUTPUT(Makefile \
 	  Doc/Makefile \
 		Doc/Support/Makefile \
 		Doc/User/Makefile
+          SigTrap/Makefile \
 	  Doxyfile
 	  )
 

@@ -129,6 +129,7 @@ package require BWStdMenuBar
 package require TKSessionPreferences
 package require TKSessionCommandMenu
 package require TKSessionPipeIO
+package require SigTrap
 
 puts stderr "*** Main toplevel's class = [. cget -class]"
 
@@ -376,7 +377,10 @@ proc TKSessionManager::ReloadMenu {} {
   variable Main
   TKSessionCommandMenu::CommandMenu reload \
 		"[TKSessionPreferences::Preferences get [winfo toplevel $Main] \
-				menuFilename MenuFilename]"
+                        menuFilename MenuFilename]"
+  variable Text
+  $Text insert end "Menu Reloaded\n"
+  $Text see end
 }
 
 proc TKSessionManager::Startup {} {
@@ -438,7 +442,18 @@ proc TKSessionManager::Startup {} {
     return
   }
   fileevent $pipefp readable [list TKSessionManager::readpipe $pipefp]  
+  sigtrap_catch $::SIGUSR1
+  after 1000 TKSessionManager::CheckUSR1
 }
+
+proc TKSessionManager::CheckUSR1 {} {
+    if {[sigtrap_received $::SIGUSR1]} {
+        ReloadMenu
+        sigtrap_reset $::SIGUSR1
+    }
+    after 1000 ::TKSessionManager::CheckUSR1
+}
+
 
 proc TKSessionManager::CheckScreenSaver {} {
   variable CheckScreenSaverCount
