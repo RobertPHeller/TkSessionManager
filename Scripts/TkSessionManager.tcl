@@ -98,8 +98,6 @@
 #	Flag to specify if the Gnome Screensaver should be allowed
 #	to run.  The Gnome Settings Daemon forks the Gnome Screensaver,
 #	which may not be desirable.  The default is no.
-# @arg @b dbusLaunch  (class @b DbusLaunch) @n
-#       Flag to specify if the Dbus Daemon should be launched.
 # @arg @b quitManager (class @b QuitManager) @n
 #       Program to run on quiting.  Typically a program that manages logging 
 #       out a session manager or rebooting the system.  If absent, then quit
@@ -146,7 +144,8 @@ namespace eval TKSessionManager {
 
   variable CheckScreenSaverCount 0
 
-  TKSessionPreferences::Preferences readpreferencesfile  
+  #TKSessionPreferences::Preferences readpreferencesfile  
+  TKSessionPreferences::Preferences configurepreferences
 
   # Window manager configurations
   wm positionfrom . user
@@ -208,6 +207,7 @@ namespace eval TKSessionManager {
 	}
     } -options {} -view {}]
 
+  parray ::env
   variable Status {}
   variable Main [MainFrame::create .main -menu $Menu \
 			-textvariable TKSessionManager::Status]
@@ -218,7 +218,6 @@ namespace eval TKSessionManager {
 			-auto both -scrollbar  both]
   pack $scrollw -expand yes -fill both
   variable Text [text [$scrollw getframe].text]
-  pack $Text -expand yes -fill both
   $scrollw setwidget $Text
   bind $Text <<Selection>> {TKSessionManager::SelectionChanged %W}
   set helpmenu [$Main getmenu help]
@@ -254,19 +253,19 @@ namespace eval TKSessionManager {
     set y 0
   }
   wm maxsize $w [winfo screenwidth $w] [winfo screenheight $w]
-  TKSessionPreferences::Preferences set *MainGeometry "+$x+$y" widgetDefault
-
+  #TKSessionPreferences::Preferences set *MainGeometry "+$x+$y" widgetDefault
+  wm geometry $w [TKSessionPreferences::Preferences get $w mainGeometry MainGeometry]
+  
   variable TextFileTypes {
 	{{Text files} {.txt .text} TEXT}
 	{{All Files} * TEXT}
   }
 
   update idle
-  TKSessionPreferences::Preferences configurepreferences
   global env
   if {[catch {set env(TMPDIR} TMPDIR]} {set TMPDIR /tmp}
   set pipename [file join $TMPDIR \
-  "[TKSessionPreferences::Preferences get [winfo toplevel $Main] pipeName PipeName]"]
+  "$::tcl_platform(user)[TKSessionPreferences::Preferences get [winfo toplevel $Main] pipeName PipeName]"]
   variable Pipe [TKSessionPipeIO::Pipe %AUTO% -textoutput $Text -name $pipename]
   TKSessionCommandMenu::CommandMenu setpipe $Pipe
   if {[catch {exec /usr/bin/pm-is-supported --suspend}] == 0} {
@@ -376,8 +375,9 @@ proc TKSessionManager::PrintMainText {} {
 proc TKSessionManager::ReloadMenu {} {
   variable Main
   TKSessionCommandMenu::CommandMenu reload \
-		"[TKSessionPreferences::Preferences get [winfo toplevel $Main] \
-                        menuFilename MenuFilename]"
+        [file join $::env(HOME) \
+         "[TKSessionPreferences::Preferences get [winfo toplevel $Main] \
+         menuFilename MenuFilename]"]
   variable Text
   $Text insert end "Menu Reloaded\n"
   $Text see end
@@ -391,65 +391,39 @@ proc TKSessionManager::Startup {} {
 			windowManager WindowManager]"
   catch {exec $windowmanager &} result
   $Text insert end "exec $windowmanager: $result\n"
-  set dbusLaunch "[TKSessionPreferences::Preferences get \
-                        [winfo toplevel $Main] \
-                        dbusLaunch DbusLaunch]"
-  if {$dbusLaunch} {
-      if {[catch {set ::env(DBUS_SESSION_BUS_ADDRESS)} DBUS_SESSION_BUS_ADDRESS]} {
-          if {![catch {exec dbus-launch --csh-syntax --exit-with-session} dbusinfo]} {
-              if {[regexp -line {^setenv[[:space:]]([^[:space:]]*)[[:space:]]'(.*)';$} $dbusinfo => name value] > 0} {
-                  set ::env($name) "$value"
-              }
-              if {[regexp -line {^set[[:space:]]([^=]*)=([[:digit:]]*);$} $dbusinfo => name value] > 0} {
-                  set ::env($name) "$value"
-              }
-          }
-      }
-  }
+
 
     
-  set gnomeSettingsDaemonP "[TKSessionPreferences::Preferences get \
-				[winfo toplevel $Main] \
-				gnomeSettingsDaemon GnomeSettingsDaemon]"
-  if {$gnomeSettingsDaemonP} {
-    set gnome_settings_daemon [auto_execok gnome-settings-daemon]
-    if {$gnome_settings_daemon eq ""} {
-        if {[file exists /usr/libexec/gnome-settings-daemon]} {
-            set gnome_settings_daemon /usr/libexec/gnome-settings-daemon
-        }
-    }
-    if {$gnome_settings_daemon ne ""} {
-        if {![catch {exec $gnome_settings_daemon &} result]} {
-            $Text insert end "exec $gnome_settings_daemon: $result\n"
-            set gnomeScreensaverP [TKSessionPreferences::Preferences get \
-                                   [winfo toplevel $Main] gnomeScreensaver \
-                                   GnomeScreensaver]
-            if {!$gnomeScreensaverP} {
-                after 1000 TKSessionManager::CheckScreenSaver
-            }
-        } else {
-            $Text insert end "exec $gnome_settings_daemon: $result\n"
-        }
-    } else {
-        $Text insert end "gnome-settings-daemon not found, not starting it.\n"
-    }
-  }
-  set sessionScript "[TKSessionPreferences::Preferences get \
-			[winfo toplevel $Main] \
-			sessionScript SessionScript]"
+  set sessionScript [file join $::env(HOME) \
+                     "[TKSessionPreferences::Preferences get \
+                     [winfo toplevel $Main] \
+                           sessionScript SessionScript]"]
   if {[catch {open "|$sessionScript" r} pipefp]} {
     $Text insert end "open |$sessionScript r: $pipefp\n"
     return
   }
   fileevent $pipefp readable [list TKSessionManager::readpipe $pipefp]  
   sigtrap_catch $::SIGUSR1
+  variable MenuLoadTime
+  ReloadMenu
+  set MenuLoadTime [clock seconds]
   after 1000 TKSessionManager::CheckUSR1
 }
 
 proc TKSessionManager::CheckUSR1 {} {
+    variable Main
+    variable MenuLoadTime
+    set menufile [file join $::env(HOME) \
+                  "[TKSessionPreferences::Preferences get \
+                  [winfo toplevel $Main] \
+                        menuFilename MenuFilename]"]
     if {[sigtrap_received $::SIGUSR1]} {
         ReloadMenu
+        set MenuLoadTime [clock seconds]
         sigtrap_reset $::SIGUSR1
+    } elseif {[file mtime $menufile] > $MenuLoadTime} {
+        ReloadMenu
+        set MenuLoadTime [clock seconds]
     }
     after 1000 ::TKSessionManager::CheckUSR1
 }
@@ -485,8 +459,9 @@ proc TKSessionManager::EditMenu {} {
   variable Main
   TKSessionCommandMenu::CommandMenu edit \
 	-parent $Main \
-	-menufile "[TKSessionPreferences::Preferences get [winfo toplevel $Main] \
-				menuFilename MenuFilename]"
+	-menufile [file join $::env(HOME) \
+                   "[TKSessionPreferences::Preferences get [winfo toplevel $Main] \
+                   menuFilename MenuFilename]"]
 
 }
 

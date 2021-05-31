@@ -1,0 +1,75 @@
+<schemalist gettext-domain="@PACKAGE@">
+  <schema id="org.tk.sessionmanager" path="/org/tk/desktop/sessionmanager/">
+    <key name="session-start" type="i">
+      <default>0</default>
+      <summary>Current session start time</summary>
+      <description>Unix time of the start of the current session.</description>
+    </key>
+    <key name="main-title" type="s">
+      <default>'TK Session Manager'</default>
+      <summary>Session manager window title</summary>
+      <description>This is the session manager window title.</description>
+    </key>
+    <key name="main-geometry" type="s">
+      <default>''</default>
+      <summary>Session manager window geometry</summary>
+      <description>This is the session manager window geometry.</description>
+    </key>
+    <key name="menu-filename" type="s">
+      <default>'tkSessionManager.menu'</default>
+      <summary>Session manager menu file</summary>
+      <description>Session manager menu file, presumed to be relative to $(HOME).</description>
+    </key>
+    <key name="print-command" type="s">
+      <default>'lpr'</default>
+      <summary>Print command</summary>
+      <description>Command to use to print.</description>
+    </key>
+    <key name="pipe-name-suffix" type="s">
+      <default>'_TkSessionManager'</default>
+      <summary>Pipe name suffix</summary>
+      <description>Pipe name suffix, appended to the current username.</description>
+    </key>
+    <key name="window-manager" type="s">
+      <default>'fvwm'</default>
+      <summary>Window Manager</summary>
+      <description>The window manager is the program that draws the title bar and borders around windows, and allows you to move and resize windows.</description>
+    </key>
+    <key name="session-script" type="s">
+      <default>'/bin/true'</default>
+      <summary>Session script</summary>
+      <description>The script to run to autostart session applications.</description>
+    </key>
+    <key name="panel" type="s">
+      <default>'TkPanel'</default>
+      <summary>Panel</summary>
+      <description>The panel provides the bar at the top or bottom of the screen containing menus, the window list, status icons, the clock, etc.</description>
+    </key>
+    <key name="text-font" type="s">
+      <default>'TkFixedFont'</default>
+      <summary>Font to use</summary>
+      <description>The font to use in the text area.</description>
+    </key>
+    <key name="background-color" type="s">
+      <default>'#e8e8e7'</default>
+      <summary>Background color</summary>
+      <description>The background color to use in the text area.</description>
+    </key>
+    <key name="foreground-color" type="s">
+      <default>'#2e3436'</default>
+      <summary>Foreground color</summary>
+      <description>The foreground color to use in the text area.</description>
+    </key>
+    <key name="border-color" type="s">
+      <default>'grey'</default>
+      <summary>Border color</summary>
+      <description>The border color to use in the text area.</description>
+    </key>
+    <key name="icon-name" type="s">
+      <default>'TkSessionManager'</default>
+      <summary>Icon Name</summary>
+      <description>The icon name to use.</description>
+    </key>
+  </schema>
+</schemalist>
+    

@@ -37,7 +37,7 @@ package require snit
 package require BWidget
 package require TKSessionCommandMenu
 #puts stderr "*** tk appname  = [tk appname]"
-
+package require GlibTcl
 
 namespace eval TKSessionPreferences {
   snit::type Preferences {
@@ -45,33 +45,90 @@ namespace eval TKSessionPreferences {
     pragma -hastypedestroy no
     pragma -hasinstances   no
 
-    typevariable _preferences -array {}
-    typevariable _preferencesfile 
+    #typevariable _preferences -array {}
+    #typevariable _preferencesfile 
+    typevariable GSM_SCHEMA "org.tk.sessionmanager" 
+    typevariable GSM_SESSION_START_KEY "session-start"
+    typevariable GSM_SESSION_PREFERENCES_KEYS -array {
+        *MainTitle "main-title"
+        *MainGeometry "main-geometry"
+        *MenuFilename "menu-filename"
+        *PrintCommand "print-command"
+        *PipeName "pipe-name-suffix"
+        *WindowManager "window-manager"
+        *SessionScript "session-script"
+        *Panel "panel"
+        *Text*font "text-font"
+        *background "background-color"
+        *foreground "foreground-color"
+        *borderColor "border-color"
+        *iconName "icon-name"
+    }
+    proc _lookupKey {window name} {
+        set matchname "${window}.${name}"
+        foreach pref [array names GSM_SESSION_PREFERENCES_KEYS] {
+            if {[string match $pref $matchname]} {
+                return $GSM_SESSION_PREFERENCES_KEYS($pref)
+            }
+        }
+        return {}
+    }
+    proc _lookupPattern {key} {
+        foreach pref [array names GSM_SESSION_PREFERENCES_KEYS] {
+            if {$GSM_SESSION_PREFERENCES_KEYS($pref) eq $key} {
+                return $pref
+            }
+        }
+        return {}
+    }
 
     typemethod readpreferencesfile {} {
-        puts stderr "TKSessionPreferences::Preferences readpreferencesfile: _preferencesfile is $_preferencesfile"
-        catch {option readfile $_preferencesfile startupFile}
     }
     typemethod configurepreferences {{window .}} {
-      $type _createdialog
-      foreach pattern [array names _preferences] {
-	foreach {name class default widget configscript} \
-				"$_preferences($pattern)" {break}   
-	set value [$type get $window $name $class]
-	regsub -all {%value} "$configscript" "$value" script
-	catch {uplevel #0 $script}
-	puts stderr "*** $type configurepreferences: name = '$name', widget = '$widget', value = '$value'"
-	$widget configure -text "$value"
-      }
+        #$type _createdialog
+        #foreach pattern [array names _preferences] {
+	#foreach {name class default widget configscript} \
+	#			"$_preferences($pattern)" {break}   
+	#set value [$type get $window $name $class]
+	#regsub -all {%value} "$configscript" "$value" script
+	#catch {uplevel #0 $script}
+	#puts stderr "*** $type configurepreferences: name = '$name', widget = '$widget', value = '$value'"
+	#$widget configure -text "$value"
+        #}
+        set settings [g_settings_new $GSM_SCHEMA]
+        if {$settings eq "NULL"} {return}
+        foreach pref [array names GSM_SESSION_PREFERENCES_KEYS] {
+            set value [g_settings_get_string $settings $GSM_SESSION_PREFERENCES_KEYS($pref)]
+            option add "$pref" "$value" startupFile
+        }
+        g_object_unref $settings
     }
 
     typemethod set {pattern value {priority interactive}} {
-      option add "$pattern" "$value" $priority
+        #option add "$pattern" "$value" $priority
+        if {[info exists GSM_SESSION_PREFERENCES_KEYS($pattern)]} {
+            set settings [g_settings_new $GSM_SCHEMA]
+            if {$settings eq "NULL"} {return false}
+            set key $GSM_SESSION_PREFERENCES_KEYS($pattern)
+            set ret [g_settings_set_string $settings $key $value]
+            g_settings_sync
+            g_object_unref $settings
+            return $ret
+        } else {
+            return false
+        }
     }
     typemethod get {window name class} {
-      set value "[option get $window $name $class]"
-      puts stderr "*** $type get: window = $window, name = $name, class = $class, value = '$value'"
-      return "$value"
+        puts stderr "*** $type get: window = $window, name = $name, class = $class"
+        set key [_lookupKey $window $class]
+        if {$key eq {}} {set key [_lookupKey $window $name]}
+        if {$key eq {}} {return {}}
+        set settings [g_settings_new $GSM_SCHEMA]
+        if {$settings eq "NULL"} {return {}}
+        set value [g_settings_get_string $settings $key]
+        #set value "[option get $window $name $class]"
+        #puts stderr "*** $type get: window = $window, name = $name, class = $class, value = '$value'"
+        return "$value"
     }
 
 
@@ -96,14 +153,20 @@ namespace eval TKSessionPreferences {
     typevariable _labelWidth 30
 
     typeconstructor {
-      set host_preferencesfile [file join ~ .[string tolower [tk appname]]rc-[exec hostname]]
-      if {[file readable $host_preferencesfile]} {
-	set _preferencesfile $host_preferencesfile
-      } else {
-        set _preferencesfile [file join ~ .[string tolower [tk appname]]rc]
-      }
-      set dialog {}
-      puts stderr "*** TKSessionPreferences typeconstructor: _preferencesfile is $_preferencesfile"
+        set settings [g_settings_new $GSM_SCHEMA]
+        if {$settings eq "NULL"} {return false}
+        set ret [g_settings_set_int $settings $GSM_SESSION_START_KEY [clock seconds]]
+        g_settings_sync
+        g_object_unref $settings
+        return $ret
+        #set host_preferencesfile [file join ~ .[string tolower [tk appname]]rc-[exec hostname]]
+        #if {[file readable $host_preferencesfile]} {
+	#set _preferencesfile $host_preferencesfile
+        #} else {
+        #set _preferencesfile [file join ~ .[string tolower [tk appname]]rc]
+        #}
+        #set dialog {}
+        #puts stderr "*** TKSessionPreferences typeconstructor: _preferencesfile is $_preferencesfile"
     }
     typemethod _createdialog {} {
       if {"$dialog" ne "" && [winfo exists $dialog]} {return}
@@ -323,18 +386,18 @@ namespace eval TKSessionPreferences {
       return [$dialog enddialog cancel]
     }
     typemethod edit {args} {
-      $type _createdialog
-      set parent [from args -parent .]
-      $dialog configure -parent $parent
-      wm transient [winfo toplevel $dialog] [winfo toplevel $parent]
-      foreach pattern [array names _preferences] {
-	foreach {name class default widget configscript} \
-				"$_preferences($pattern)" {break}   
-	set value [$type get $parent $name $class]
-	puts stderr "*** $type edit: name = '$name', widget = '$widget', value = '$value'"
-	$widget configure -text "$value"
-      }
-      return [$dialog draw]
+      #$type _createdialog
+      #set parent [from args -parent .]
+      #$dialog configure -parent $parent
+      #wm transient [winfo toplevel $dialog] [winfo toplevel $parent]
+      #foreach pattern [array names _preferences] {
+      #foreach {name class default widget configscript} \
+      #"$_preferences($pattern)" {break}   
+      #set value [$type get $parent $name $class]
+      #puts stderr "*** $type edit: name = '$name', widget = '$widget', value = '$value'"
+      #$widget configure -text "$value"
+      #}
+      #return [$dialog draw]
     }
   }
 }

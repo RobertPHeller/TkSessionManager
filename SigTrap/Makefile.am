@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Sat Apr 18 10:24:09 2020
-#  Last Modified : <200418.1119>
+#  Last Modified : <200630.1807>
 #
 #  Description	
 #
@@ -50,7 +50,7 @@ sigtrap_la_CFLAGS =  -DUSE_TCL_STUBS $(INCLUDES) $(DEFS) -Wall -g
 sigtrap_la_LDFLAGS = -g -module -avoid-version $(TCL_STUB_LIB_SPEC)
 sigtrap_la_LIBADD = $(TCL_STUB_LIB_SPEC)
 SWIG_FLAGS =  -tcl8  $(INCLUDES)
-
+EXTRA_DIST = sigtrap.i
 BUILT_SOURCES       = sigtrap.c
 
 sigtrap.c : sigtrap.i

@@ -8,7 +8,7 @@ AC_SUBST(build)
 AC_CANONICAL_TARGET
 AC_SUBST(target)
 
-AM_INIT_AUTOMAKE([TkSessionManager],1.0.4)
+AM_INIT_AUTOMAKE([TkSessionManager],1.0.5)
 if test "x${prefix}" = "xNONE"; then
     prefix=/usr/local
 fi
@@ -53,32 +53,36 @@ AX_PKG_SWIG(1.3)
 AC_LIBTOOL_DLOPEN
 AM_PROG_LIBTOOL
 
-AC_PATH_PROGS(HOSTTCLSH,[tclsh8.4 tclsh])
+AC_PATH_PROGS(HOSTTCLSH,[tclsh8.6 tclsh])
 
 AX_BWIDGET
 AX_SNIT
+
+PKG_PROG_PKG_CONFIG()
+PKG_CHECK_MODULES([DBUS_GLIB], dbus-glib-1)
+PKG_CHECK_MODULES([GLIB2], glib-2.0)
+PKG_CHECK_MODULES([GIO2], gio-2.0)
+_PKG_CONFIG([GIO2_INCLUDES], [cflags-only-I], gio-2.0)
+AC_SUBST([GIO2_INCLUDES],$pkg_cv_GIO2_INCLUDES)
+GLIB_GSETTINGS
 
 AC_PATH_PROGS(UNZIP,unzip)
 
 AC_MSG_CHECKING([Checking target Img and tclkit])
 case $target_os in 
-  macos | darwin) 
-    AC_SUBST(IMG_ZIP, Img-1.3-Mac-Universal.zip)
-    AC_SUBST(TCLKITRUN, tclkit-darwin-univ-aqua)
-    ;;
   linux-gnu)
     case $target_cpu in
       x86_64)
-	AC_SUBST(IMG_ZIP, Img-1.3-Linux64.zip)
-	AC_SUBST(TCLKITRUN, tclkit-linux-x86_64)
+        AC_SUBST(TCLKITRUN, [tclkit-8.6.11-x86_64-Img1.4.7])
 	;;
       i*86)
-	AC_SUBST(IMG_ZIP, Img-1.3-Linux32.zip)
-	AC_SUBST(TCLKITRUN, tclkit-linux-x86)
+	AC_SUBST(TCLKITRUN, [tclkit-8.6.11-i386-Img1.4.7])
 	;;
       arm*)
-        AC_SUBST(IMG_ZIP, Img-1.3-Linuxarmv7l.zip)
-        AC_SUBST(TCLKITRUN, tclkit-linux-armv7l)
+        AC_SUBST(TCLKITRUN, [tclkit-8.6.11-armv7l-Img1.4.8])
+        ;;
+      aarch64)
+        AC_SUBST(TCLKITRUN, [tclkit-8.6.10-aarch64-Img1.4.9])
         ;;
       *)
 	AC_MSG_ERROR([Unsupported Linux arch: $target_cpu])
@@ -86,35 +90,29 @@ case $target_os in
      esac
      ;;
 
-   mingw32 | winnt | windows* | cygwin)
-     AC_SUBST(IMG_ZIP, Img-1.3-win32.zip)
-     AC_SUBST(TCLKITRUN, tclkit-win32.exe)
-     AC_SUBST(EXEEXT, .exe)
-     ;;
    *) 
      AC_MSG_ERROR([Unsupported Operating System: $target_os])
      ;;
 esac
-AC_MSG_RESULT([IMG_ZIP is $IMG_ZIP and TCLKITRUN is $TCLKITRUN])
+AC_MSG_RESULT([TCLKITRUN is $TCLKITRUN])
 
 
 AC_MSG_CHECKING([Checking build tclkit])
 case $build_os in 
-  macos | darwin) 
-    AC_SUBST(TCLKITBSRC, tclkit-darwin-univ-aqua)
-    AC_SUBST(BEXEEXT, )
-    ;;
   linux-gnu)
     AC_SUBST(BEXEEXT, )
     case $build_cpu in
       x86_64)
-	AC_SUBST(TCLKITBSRC, tclkit-linux-x86_64)
+	AC_SUBST(TCLKITBSRC, [tclkit-8.6.11-x86_64-Img1.4.7])
 	;;
       i*86)
-	AC_SUBST(TCLKITBSRC, tclkit-linux-x86)
+	AC_SUBST(TCLKITBSRC, [tclkit-8.6.11-i386-Img1.4.7])
 	;;
       arm*)
-        AC_SUBST(TCLKITBSRC, tclkit-linux-armv7l)
+        AC_SUBST(TCLKITBSRC, [tclkit-8.6.11-armv7l-Img1.4.8])
+        ;;
+      aarch64)
+        AC_SUBST(TCLKITBSRC, [tclkit-8.6.10-aarch64-Img1.4.9])
         ;;
       *)
 	AC_MSG_ERROR([Unsupported Linux arch: $build_cpu])
@@ -122,10 +120,6 @@ case $build_os in
      esac
      ;;
 
-   mingw32 | winnt | windows* | cygwin)
-     AC_SUBST(BEXEEXT, .exe)
-     AC_SUBST(TCLKITBSRC, tclkit-win32.exe)
-     ;;
    *) 
      AC_MSG_ERROR([Unsupported Operating System: $build_os])
      ;;
@@ -149,6 +143,9 @@ AC_OUTPUT(Makefile \
 		Doc/Support/Makefile \
 		Doc/User/Makefile
           SigTrap/Makefile \
+          glib_tcl/Makefile \
+          glib_schema/Makefile \
+          glib_schema/org.tk.sessionmanager.gschema.xml
 	  Doxyfile
 	  )
 
