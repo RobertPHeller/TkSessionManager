@@ -45,6 +45,11 @@
       <summary>Panel</summary>
       <description>The panel provides the bar at the top or bottom of the screen containing menus, the window list, status icons, the clock, etc.</description>
     </key>
+    <key name="panel-name-list" type="as">
+      <default>[ ]</default>
+      <summary>List of panel names</summary>
+      <description>List of panels to start up</description>
+    </key>
     <key name="text-font" type="s">
       <default>'TkFixedFont'</default>
       <summary>Font to use</summary>

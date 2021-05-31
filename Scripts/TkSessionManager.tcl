@@ -116,6 +116,17 @@
 
 set argv0 [info nameofexecutable]
 
+set progdir [file dirname $argv0]
+append ::env(PATH) ":$progdir"
+global progdir_TkPanel
+set progdir_TkPanel [file join [file dirname [file dirname [file dirname $argv0]]] TkPanel trunk]
+global progdir_TkPanelApplets
+set progdir_TkPanelApplets [file join [file dirname [file dirname [file dirname $argv0]]] TkPanelApplets trunk]
+append ::env(PATH) ":$progdir_TkPanel"
+append ::env(PATH) ":$progdir_TkPanelApplets"
+
+puts stderr "*** ::env(PATH) is $::env(PATH)"
+
 package require Tk
 
 puts stderr "*** toplevel class: [. cget -class]"
@@ -290,21 +301,17 @@ namespace eval TKSessionManager {
 #*************************************
 proc TKSessionManager::CareFulExit {} {
     variable Main
-    set qm [TKSessionPreferences::Preferences get [winfo toplevel $Main] \
-            quitManager QuitManager]
-    if {$qm eq ""} {
-        if {[string compare \
-             [tk_messageBox -default no -icon question \
-              -message {Really Quit?} \
-              -title {Careful Exit} -type yesno] {yes}] == 0} {
-            variable Pipe
-            catch {$Pipe destroy}
-            set $Pipe {}
-            # And exit
-            exit
-        }
-    } else {
-        eval exec $qm
+    variable PanelPids
+    if {[string compare \
+         [tk_messageBox -default no -icon question \
+          -message {Really Quit?} \
+          -title {Careful Exit} -type yesno] {yes}] == 0} {
+        variable Pipe
+        catch {$Pipe destroy}
+        set $Pipe {}
+        ## kill panels?
+        # And exit
+        exit
     }
 }
 
@@ -480,7 +487,30 @@ proc TKSessionManager::Shutdown {} {
     }
 }
 
+proc TKSessionManager::StartPanels {} {
+    variable PanelPids
+    set PanelPids [list]
+    set PanelProg [TKSessionPreferences::Preferences get . panel Panel]
+    puts stderr "*** TKSessionManager::StartPanels: PanelProg is '$PanelProg'"
+    set tkpanel [auto_execok $PanelProg]
+    puts stderr "*** TKSessionManager::StartPanels: (auto_execok) tkpanel is '$tkpanel'"
+    if {$tkpanel eq ""} {return}
+    set panels [TKSessionPreferences::Preferences get_panel_name_list]
+    puts stderr "*** TKSessionManager::StartPanels: panels is {$panels}"
+    foreach p $panels {
+        puts stderr "*** TKSessionManager::StartPanels: p is '$p'"
+        if {[catch {exec $tkpanel -- -name $p &} pid]} {
+            tk_messageBox -icon error \
+                  -message "Failed to start panel $p: $pid" \
+                  -type ok
+        } else {
+            lappend PanelPids $pid
+        }
+    }
+}
+    
+
 
 TKSessionManager::ReloadMenu
 TKSessionManager::Startup
-
+TKSessionManager::StartPanels

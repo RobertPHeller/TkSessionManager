@@ -8,7 +8,7 @@ AC_SUBST(build)
 AC_CANONICAL_TARGET
 AC_SUBST(target)
 
-AM_INIT_AUTOMAKE([TkSessionManager],1.0.5)
+AM_INIT_AUTOMAKE([TkSessionManager],1.1.0)
 if test "x${prefix}" = "xNONE"; then
     prefix=/usr/local
 fi
@@ -145,7 +145,7 @@ AC_OUTPUT(Makefile \
           SigTrap/Makefile \
           glib_tcl/Makefile \
           glib_schema/Makefile \
-          glib_schema/org.tk.sessionmanager.gschema.xml
+          glib_schema/org.tk.sessionmanager.gschema.xml \
 	  Doxyfile
 	  )
 
