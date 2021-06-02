@@ -1,7 +1,4 @@
-Scripts = BWStdMenuBar.tcl fileentry.tcl HTMLHelp.tcl labelcombobox.tcl \
-	  labelselectcolor.tcl labelspinbox.tcl ReadConfiguration.tcl \
-	  splash.tcl TKSessionCommandMenu.tcl TkSessionManager.tcl \
-	  TKSessionPipeIO.tcl TKSessionPreferences.tcl
+Scripts = $(filter-out Version.tcl $(wildcard *.tcl))
 Images  = DeepwoodsBanner.gif
 
 BUILT_SOURCES = Version.tcl

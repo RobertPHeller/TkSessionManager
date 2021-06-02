@@ -49,7 +49,6 @@ namespace eval TKSessionPreferences {
     #typevariable _preferencesfile 
     typevariable GSM_SCHEMA "org.tk.sessionmanager" 
     typevariable GSM_SESSION_START_KEY "session-start"
-    typevariable GSM_PANEL_NAME_LIST_KEY "panel-name-list"
     typevariable GSM_SESSION_PREFERENCES_KEYS -array {
         *MainTitle "main-title"
         *MainGeometry "main-geometry"
@@ -129,12 +128,6 @@ namespace eval TKSessionPreferences {
         set value [g_settings_get_string $settings $key]
         #set value "[option get $window $name $class]"
         #puts stderr "*** $type get: window = $window, name = $name, class = $class, value = '$value'"
-        return "$value"
-    }
-    typemethod get_panel_name_list {} {
-        set settings [g_settings_new $GSM_SCHEMA]
-        if {$settings eq "NULL"} {return {}}
-        set value [g_settings_get_strv $settings $GSM_PANEL_NAME_LIST_KEY]
         return "$value"
     }
 

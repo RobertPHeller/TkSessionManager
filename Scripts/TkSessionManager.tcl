@@ -301,7 +301,6 @@ namespace eval TKSessionManager {
 #*************************************
 proc TKSessionManager::CareFulExit {} {
     variable Main
-    variable PanelPids
     if {[string compare \
          [tk_messageBox -default no -icon question \
           -message {Really Quit?} \
@@ -399,7 +398,14 @@ proc TKSessionManager::Startup {} {
   catch {exec $windowmanager &} result
   $Text insert end "exec $windowmanager: $result\n"
 
-
+  set panelprog [auto_execok [TKSessionPreferences::Preferences get [winfo toplevel $Main] panel Panel]]
+  if {$panelprog ne {}} {
+      if {[catch {exec $panelprog &} pid]} {
+          tk_messageBox -icon error -type ok \
+                -message "Failed to start $panelprog: $pid"
+      }
+  }
+  
     
   set sessionScript [file join $::env(HOME) \
                      "[TKSessionPreferences::Preferences get \
@@ -415,6 +421,7 @@ proc TKSessionManager::Startup {} {
   ReloadMenu
   set MenuLoadTime [clock seconds]
   after 1000 TKSessionManager::CheckUSR1
+  
 }
 
 proc TKSessionManager::CheckUSR1 {} {
@@ -487,30 +494,7 @@ proc TKSessionManager::Shutdown {} {
     }
 }
 
-proc TKSessionManager::StartPanels {} {
-    variable PanelPids
-    set PanelPids [list]
-    set PanelProg [TKSessionPreferences::Preferences get . panel Panel]
-    puts stderr "*** TKSessionManager::StartPanels: PanelProg is '$PanelProg'"
-    set tkpanel [auto_execok $PanelProg]
-    puts stderr "*** TKSessionManager::StartPanels: (auto_execok) tkpanel is '$tkpanel'"
-    if {$tkpanel eq ""} {return}
-    set panels [TKSessionPreferences::Preferences get_panel_name_list]
-    puts stderr "*** TKSessionManager::StartPanels: panels is {$panels}"
-    foreach p $panels {
-        puts stderr "*** TKSessionManager::StartPanels: p is '$p'"
-        if {[catch {exec $tkpanel -- -name $p &} pid]} {
-            tk_messageBox -icon error \
-                  -message "Failed to start panel $p: $pid" \
-                  -type ok
-        } else {
-            lappend PanelPids $pid
-        }
-    }
-}
-    
 
 
 TKSessionManager::ReloadMenu
 TKSessionManager::Startup
-TKSessionManager::StartPanels

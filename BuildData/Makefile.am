@@ -1,6 +1,6 @@
 EXTRA_DIST=tclkit-8.6.10-aarch64-Img1.4.9 tclkit-8.6.11-armv7l-Img1.4.8 \
 		tclkit-8.6.11-i386-Img1.4.7 tclkit-8.6.11-x86_64-Img1.4.7 \
-		pdf4tcl05.zip Tclxml3.1-GenericPureTcl.zip
+		Tclxml3.1-GenericPureTcl.zip
 
 BUILT_SOURCES = tclkit${BEXEEXT}
 
