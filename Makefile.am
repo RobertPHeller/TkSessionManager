@@ -41,6 +41,8 @@ TkSessionManager$(EXEEXT): $(AllScripts) $(AllImages) $(AllHelpDep) \
 		TkSessionManager lib/Common $(LibScripts)
 	$(TCLKIT) $(top_srcdir)/BuildScripts/MakePkgIndex.kit TkSessionManager \
 		Common
+	$(UNZIP) -qq -d TkSessionManager.vfs/lib \
+		$(top_srcdir)/BuildData/Tclxml3.1-GenericPureTcl.zip
 	$(TCLKIT) $(top_srcdir)/BuildScripts/AddKitFile.kit -srcdir $(srcdir) \
 		TkSessionManager lib/SigTrap \
 		SigTrap/pkgIndex.tcl SigTrap/.libs/sigtrap$(SHLIB_SUFFIX)
