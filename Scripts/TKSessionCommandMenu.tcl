@@ -412,12 +412,12 @@ namespace eval TKSessionCommandMenu {
       return [list 3 $prefered]
     }
     typemethod _run {commandlist} {
-      puts stderr "*** $type _run $commandlist"
+      #puts stderr "*** $type _run $commandlist"
       if {![catch {$_pipe cget -name} pipename]} {
-        puts stderr "*** $type _run: have pipe"
+        #puts stderr "*** $type _run: have pipe"
 	eval exec $commandlist >& $pipename &
       } else {
-        puts stderr "*** $type _run: don't have pipe"
+        #puts stderr "*** $type _run: don't have pipe"
 	eval exec $commandlist >@ stdout 2>@ stderr &
       }
     }

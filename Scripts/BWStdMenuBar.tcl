@@ -139,13 +139,13 @@ proc StdMenuBar::MakeMenu {args} {
       set menu [lreplace $menu [expr $index + 1] [expr $index + 1] $value]
     }
   }
-  puts stderr "*** StdMenuBar::MakeMenu: menu = $menu"
+  #puts stderr "*** StdMenuBar::MakeMenu: menu = $menu"
   set result {}
   foreach {option value} $menu {
     if {[llength $value] == 0} {continue}
     eval [concat lappend result $value]
   }
-  puts stderr "*** StdMenuBar::MakeMenu: result = $result"
+  #puts stderr "*** StdMenuBar::MakeMenu: result = $result"
   return $result
 }
 

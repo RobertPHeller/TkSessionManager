@@ -125,12 +125,12 @@ set progdir_TkPanelApplets [file join [file dirname [file dirname [file dirname 
 append ::env(PATH) ":$progdir_TkPanel"
 append ::env(PATH) ":$progdir_TkPanelApplets"
 
-puts stderr "*** ::env(PATH) is $::env(PATH)"
+#puts stderr "*** ::env(PATH) is $::env(PATH)"
 
 package require Tk
 
-puts stderr "*** toplevel class: [. cget -class]"
-puts stderr "*** tk appname:  [tk  appname]"
+#puts stderr "*** toplevel class: [. cget -class]"
+#puts stderr "*** tk appname:  [tk  appname]"
 
 package require BWidget
 package require HTMLHelp
@@ -140,7 +140,7 @@ package require TKSessionCommandMenu
 package require TKSessionPipeIO
 package require SigTrap
 
-puts stderr "*** Main toplevel's class = [. cget -class]"
+#puts stderr "*** Main toplevel's class = [. cget -class]"
 
 # Image Directory setup
 global ImageDir 
@@ -218,7 +218,7 @@ namespace eval TKSessionManager {
 	}
     } -options {} -view {}]
 
-  parray ::env
+  #parray ::env
   variable Status {}
   variable Main [MainFrame::create .main -menu $Menu \
 			-textvariable TKSessionManager::Status]

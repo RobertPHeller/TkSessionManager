@@ -119,7 +119,7 @@ namespace eval TKSessionPreferences {
         }
     }
     typemethod get {window name class} {
-        puts stderr "*** $type get: window = $window, name = $name, class = $class"
+        #puts stderr "*** $type get: window = $window, name = $name, class = $class"
         set key [_lookupKey $window $class]
         if {$key eq {}} {set key [_lookupKey $window $name]}
         if {$key eq {}} {return {}}

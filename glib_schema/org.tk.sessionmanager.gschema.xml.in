@@ -45,11 +45,6 @@
       <summary>Panel</summary>
       <description>The panel provides the bar at the top or bottom of the screen containing menus, the window list, status icons, the clock, etc.</description>
     </key>
-    <key name="panel-layout-file" type="s">
-      <default>'tk-panel-layout.xml'</default>
-      <summary>Panel Layout File</summary>
-      <description>Contains the initial panel layout.</description>
-    </key>
     <key name="text-font" type="s">
       <default>'TkFixedFont'</default>
       <summary>Font to use</summary>

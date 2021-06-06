@@ -1,4 +1,4 @@
-Scripts = $(filter-out Version.tcl $(wildcard *.tcl))
+Scripts = $(filter-out Version.tcl, $(wildcard *.tcl))
 Images  = DeepwoodsBanner.gif
 
 BUILT_SOURCES = Version.tcl

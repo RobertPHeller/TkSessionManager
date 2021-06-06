@@ -42,19 +42,19 @@ namespace eval TKSessionPipeIO {
       $self configurelist $args
       catch {file delete "$options(-name)"}
       if {[catch "exec mkfifo $options(-name)" error]} {
-	puts stderr "*** $type create $self: mkfifo failed: $error"
+	#puts stderr "*** $type create $self: mkfifo failed: $error"
 	set _pipeFP {}
       } else {
 	set _pipeFP [open "$options(-name)" {RDONLY NONBLOCK} 0x006]
-	puts stderr "*** $type create $self: _pipeFP = $_pipeFP"
+	#puts stderr "*** $type create $self: _pipeFP = $_pipeFP"
 	fconfigure $_pipeFP -blocking 0
 	fileevent $_pipeFP readable [mymethod _ReadMenuPipe]
       }
     }
     method _ReadMenuPipe {} {
-      puts stderr "*** $self _ReadMenuPipe"
+      #puts stderr "*** $self _ReadMenuPipe"
       if {[gets $_pipeFP line] >= 0} {
-        puts stderr "*** $self _ReadMenuPipe: line = '$line'"
+        #puts stderr "*** $self _ReadMenuPipe: line = '$line'"
 	if {[winfo exists "$options(-textoutput)"]} {
 	  $options(-textoutput) insert end "$line\n"
 	  $options(-textoutput) see end
