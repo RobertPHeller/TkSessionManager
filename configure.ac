@@ -52,7 +52,10 @@ TEA_PUBLIC_TCL_HEADERS
 AC_SUBST(SHLIB_SUFFIX)
 AX_PKG_SWIG(1.3)
 _LT_SET_OPTION([LT_INIT],[dlopen])
+m4_warn([obsolete],[_LT_SET_OPTION([LT_INIT],[dlopen])
 m4_warn([obsolete],[AC_LIBTOOL_DLOPEN: Remove this warning and the call to _LT_SET_OPTION when you
+put the 'dlopen' option into LT_INIT's first parameter.])
+: Remove this warning and the call to _LT_SET_OPTION when you
 put the 'dlopen' option into LT_INIT's first parameter.])
 
 LT_INIT
