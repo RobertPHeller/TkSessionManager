@@ -78,8 +78,7 @@ make install
 ```
 It uses tclkit technology to create a standalong native executable, so
 once built, it is not necessary for Tcl/Tk to be installed on a target
-system.  It is possible to built a 32-bit Linux executable on a 64-bit
-machine (useful if you have 32-bit target systems).
+system.  
 
 ## Menu File
 
