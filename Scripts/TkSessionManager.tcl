@@ -53,58 +53,53 @@
 #    bound to stdout and stderr of the processes launched by from the
 #    user defined menu.
 # -# Starts up the window manager.
-# -# Optionally starts the Gnome Settings Daemon and Dbus Daemon.
+# -# Optionally starts a panel
 # -# Runs a session script which launches an initial set of programs.
 # .
-#
-# Also included is an Actions menu containing menu items that perform
-# system-level actions.
 #
 # @section PARAMETERS
 # None.
 # @section RESOURCES
-# The main window class is @b Tksessionmanager.  Resources can be in either
-# the X11 option database or in the preferences resource file.
+# The configuration is in the GLIB database.  The Schema is 
+# org.tk.sessionmanager.  The preferences keys are:
 #
-# @arg @b mainTitle (class @b MainTitle) @n
+#
+# @arg @b main-title
 #	Specifies the main title.  The default is "TK Session Manager".
-# @arg @b mainGeometry (class @b MainGeometry) @n
+# @arg @b main-geometry
 #	Specifies the size and placement of the session manager window.
 #	The default is to use the natural size and to center the window
 #	on the screen.
-# @arg @b menuFilename (class @b MenuFilename) @n
+# @arg @b menu-filename
 #	Specifies the name of the file containing the commands menu.
 #	The default is \$HOME/tkSessionManager.menu.
-# @arg @b printCommand (class @b PrintCommand) @n
+# @arg @b print-command
 #	Specifies the command to use to print the contents of the
 #	session manager's text area.  Should be a command that can take
 #	a plain text stream on its stdin. Defaults to lp or lpr.
-# @arg @b pipeName (class @b PipeName) @n
+# @arg @b pipe-name-suffix
 #	Specifies the name of the pipe created in the /tmp directory.
 #	Text written to this pipe is displayed on the session manager's
 #	text area.  The default is \${USER}_TkSessionManager.
-# @arg @b windowManager (class @b WindowManager) @n
+# @arg @b window-manager
 #	Specifies the path to the window manager program to start. 
 #	Defaults to /usr/bin/fvwm.
-# @arg @b sessionScript (class @b SessionScript) @n
+# @arg @b session-script
 #	Session startup script to run.  This stript contains the
 #	commands to start up the initial set of processes for the user's
 #	session. The default is \$HOME/tkSessionManager.session.
-# @arg @b gnomeSettingsDaemon (class @b GnomeSettingsDaemon) @n
-#	Flag to specify if the Gnome Settings Daemon should be started.
-#	This might be needed to allow theme settings for GTK+ 2
-#	programs. The default is yes.
-# @arg @b gnomeScreensaver (class @b GnomeScreensaver) @n
-#	Flag to specify if the Gnome Screensaver should be allowed
-#	to run.  The Gnome Settings Daemon forks the Gnome Screensaver,
-#	which may not be desirable.  The default is no.
-# @arg @b quitManager (class @b QuitManager) @n
-#       Program to run on quiting.  Typically a program that manages logging 
-#       out a session manager or rebooting the system.  If absent, then quit
-#       just quits.
-#	
-# @section FILES
-# 	\$HOME/.tksessionmanagerrc		Preference resources
+# @arg @b panel
+#       The name of a panel program to run.
+# @arg @b text-font
+#       The text font to use.
+# @arg @b background-color
+#       The background color
+# @arg @b foreground-color
+#       The foreground color
+# @arg @b border-color
+#       The border color
+# @arg @b icon-name
+#       The icon name to use
 # @section AUTHOR
 # Robert Heller \<heller\@deepsoft.com\>
 #
