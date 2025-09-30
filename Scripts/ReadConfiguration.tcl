@@ -88,6 +88,8 @@ proc ReadConfiguration::ReadConfiguration {filename configurationArrayName} {
 # <in> configurationArrayName -- The name of the array to hold the configuration.
 # [index] ReadConfiguration::ReadConfiguration!procedure
 
+  puts stderr "*** ReadConfiguration::ReadConfiguration $filename $configuratonArrayName"
+
   upvar $configurationArrayName configurationArray
 
   if {[catch [list open "$filename" r] fp]} {

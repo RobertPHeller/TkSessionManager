@@ -8,7 +8,7 @@
  *  Author        : $Author$
  *  Created By    : Robert Heller
  *  Created       : Sun May 30 18:36:00 2021
- *  Last Modified : <210531.1115>
+ *  Last Modified : <240216.1620>
  *
  *  Description	
  *
@@ -51,9 +51,11 @@
 #include <gio/gio.h>
 
 #include <dbus/dbus.h>
-#include <dbus/dbus-glib.h>
-#include <dbus/dbus-glib-bindings.h>
-#include <dbus/dbus-glib-lowlevel.h>
+
+/*#include <dbus/dbus-glib.h> */
+/*#include <dbus/dbus-glib-bindings.h> */
+/*#include <dbus/dbus-glib-lowlevel.h>*/
+
     
 #undef SWIG_name
 #define SWIG_name "GlibTcl"

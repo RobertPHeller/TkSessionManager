@@ -1,5 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(Scripts/TkSessionManager.tcl)
+AC_INIT
+AC_CONFIG_SRCDIR([Scripts/TkSessionManager.tcl])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CANONICAL_BUILD
@@ -50,8 +51,11 @@ TEA_CONFIG_CFLAGS
 TEA_PUBLIC_TCL_HEADERS
 AC_SUBST(SHLIB_SUFFIX)
 AX_PKG_SWIG(1.3)
-AC_LIBTOOL_DLOPEN
-AM_PROG_LIBTOOL
+_LT_SET_OPTION([LT_INIT],[dlopen])
+m4_warn([obsolete],[AC_LIBTOOL_DLOPEN: Remove this warning and the call to _LT_SET_OPTION when you
+put the 'dlopen' option into LT_INIT's first parameter.])
+
+LT_INIT
 
 AC_PATH_PROGS(HOSTTCLSH,[tclsh8.6 tclsh])
 
@@ -82,7 +86,7 @@ case $target_os in
         AC_SUBST(TCLKITRUN, [tclkit-8.6.11-armv7l-Img1.4.8])
         ;;
       aarch64)
-        AC_SUBST(TCLKITRUN, [tclkit-8.6.10-aarch64-Img1.4.9])
+        AC_SUBST(TCLKITRUN, [tclkit-8.6.10-aarch64-Img1.4.14])
         ;;
       *)
 	AC_MSG_ERROR([Unsupported Linux arch: $target_cpu])
@@ -112,7 +116,7 @@ case $build_os in
         AC_SUBST(TCLKITBSRC, [tclkit-8.6.11-armv7l-Img1.4.8])
         ;;
       aarch64)
-        AC_SUBST(TCLKITBSRC, [tclkit-8.6.10-aarch64-Img1.4.9])
+        AC_SUBST(TCLKITBSRC, [tclkit-8.6.10-aarch64-Img1.4.14])
         ;;
       *)
 	AC_MSG_ERROR([Unsupported Linux arch: $build_cpu])
@@ -135,7 +139,7 @@ AC_SUBST(SYSTEMVERSION)
 
 AM_CONDITIONAL(CROSSCOMPILING,test ${cross_compiling} = "yes")
 
-AC_OUTPUT(Makefile \
+AC_CONFIG_FILES([Makefile \
 	  BuildScripts/Makefile \
 	  BuildData/Makefile \
 	  Scripts/Makefile \
@@ -147,7 +151,8 @@ AC_OUTPUT(Makefile \
           glib_schema/Makefile \
           glib_schema/org.tk.sessionmanager.gschema.xml \
 	  Doxyfile
-	  )
+	  ])
+AC_OUTPUT
 
 
 
