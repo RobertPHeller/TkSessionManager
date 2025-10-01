@@ -1,12 +1,9 @@
 USERMAN_HS = UserManual.h Preface.h Introduction.h Tutorial.h \
                 Reference.h Help.h COPYING.h
-USERMAN_FIGS = MainWindowAnnotated.png MainWindowAnnotated_small.png \
-		MenuEditorAnnotated.png MenuEditorAnnotated_small.png \
+USERMAN_FIGS = MainWindowAnnotated.png MenuEditorAnnotated.png \
 		CommandPropertiesAnnotated.png \
-		CommandPropertiesAnnotated_small.png \
 		CasscadePropertiesAnnotated.png \
-		CasscadePropertiesAnnotated_small.png MenuEditor.png \
-		MenuEditor_small.png
+		MenuEditor.png
 USERMAN = UserManual
 USERMAN_PDF = $(USERMAN).pdf
 USERMAN_HTML = $(USERMANHBase)/index.html

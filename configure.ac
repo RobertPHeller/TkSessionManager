@@ -77,7 +77,7 @@ AC_PATH_PROGS(UNZIP,unzip)
 
 AC_MSG_CHECKING([Checking target Img and tclkit])
 case $target_os in 
-  linux-gnu)
+  linux-gnu*)
     case $target_cpu in
       x86_64)
         AC_SUBST(TCLKITRUN, [tclkit-8.6.11-x86_64-Img1.4.7])
@@ -106,7 +106,7 @@ AC_MSG_RESULT([TCLKITRUN is $TCLKITRUN])
 
 AC_MSG_CHECKING([Checking build tclkit])
 case $build_os in 
-  linux-gnu)
+  linux-gnu*)
     AC_SUBST(BEXEEXT, )
     case $build_cpu in
       x86_64)

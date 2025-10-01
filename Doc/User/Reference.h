@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : 2025-09-30 20:59:34
-//  Last Modified : <250930.2150>
+//  Last Modified : <251001.0826>
 //
 //  Description	
 //
@@ -97,7 +97,7 @@ $TEMPLATE_START$2$
 /** @page Reference_Manual Reference Manual
  * The annotated main window for the TkSessionManager is shown here:
  * @image latex MainWindowAnnotated.png "Main Window, Annotated." width=5in
- * @image html MainWindowAnnotated_small.png
+ * @image html MainWindowAnnotated.png
  * There is a menu bar along the top,
  * with five menus: @c Session, @c Edit, @c Commands, 
  * @c Actions, and @c Help.  The @c Session contains menu
@@ -176,7 +176,7 @@ $TEMPLATE_START$2$
  *
  * The annotated Menu Editor window for the TkSessionManager is shown here
  * @image latex MenuEditorAnnotated.png "Menu Editor Window, annotated." width=5in
- * @image html MenuEditorAnnotated_small.png
+ * @image html MenuEditorAnnotated.png
  * At the top is the name of the menu
  * filename to save in, in the middle is the menu displayed as a tree,
  * with a set of four edit command buttons just below the menu tree, and a
@@ -190,9 +190,9 @@ $TEMPLATE_START$2$
  * The two insert buttons and the properites button
  * all pop up a small properties window, show here
  * @image latex CommandPropertiesAnnotated.png "Command Properties window, annotated."
- * @image html CommandPropertiesAnnotated_small.png
+ * @image html CommandPropertiesAnnotated.png
  * @image latex CasscadePropertiesAnnotated.png "Casscade Properties window, annotated."
- * @image html CasscadePropertiesAnnotated_small.png
+ * @image html CasscadePropertiesAnnotated.png
  * In both windows, there is an editable text label and in the case of the
  * command properties window, there is a command path that can be edited.
  * The edits in these windows can be saved by clicking the OK button or the

@@ -1,5 +1,3 @@
-$TEMPLATES$2$
-$TEMPLATE_START$1$
 // -!- C++ -!- //////////////////////////////////////////////////////////////
 //
 //  System        : 
@@ -10,7 +8,7 @@ $TEMPLATE_START$1$
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : 2025-09-30 20:29:53
-//  Last Modified : <250930.2259>
+//  Last Modified : <251001.0825>
 //
 //  Description	
 //
@@ -165,7 +163,7 @@ path/to/TkSessionManager
  * You can either create a Launcher Menu using a text editor or you can use
  * the Menu Editor, as shown here.  The Menu Editor is started from the 
  * @image latex  MenuEditor.png "Menu Editor Window." width=5in
- * @image html MenuEditor_small.png 
+ * @image html MenuEditor.png 
  * @c Menu menu item on the @c Edit menu. The Menu Editor is described in 
  * detail in Section @ref Reference2. 
  * 
