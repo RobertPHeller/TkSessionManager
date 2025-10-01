@@ -514,7 +514,7 @@ namespace eval HTMLHelp {
       install toc using text [$tocscroll getframe].toc -background white \
 							-width 20 \
 							-wrap word
-      pack $toc -fill both -expand yes
+      #pack $toc -fill both -expand yes
       $tocscroll setwidget $toc
       set _WidgetMap($toc) $win
       set bts [bindtags $toc]
@@ -534,7 +534,7 @@ namespace eval HTMLHelp {
       install helptext using text [$textscroll getframe].helptext -background white \
 							-width 80 \
 							-wrap word
-      pack $helptext -fill both -expand yes
+      #pack $helptext -fill both -expand yes
       $textscroll setwidget $helptext
       set _WidgetMap($helptext) $win
       set bts [bindtags $helptext]

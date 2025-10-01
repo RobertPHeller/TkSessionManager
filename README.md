@@ -18,8 +18,9 @@ It does the following on startup:
  3. Optionally starts a panel
  4.  Runs a session script which launches an initial set of programs.
 
-The configuration is in the GLIB database.  The Schema is 
- org.tk.sessionmanager.  The preferences keys are:
+The    configuration    is   in   the   GLIB    database.    The   Schema   is
+org.tk.sessionmanager. The configuration can be edited with gsettings (command
+line) or dconf-editor (GUI). The preferences keys are:
 
 
  - __main-title__
@@ -30,7 +31,7 @@ The configuration is in the GLIB database.  The Schema is
 	on the screen.
  -  __menu-filename__
 	Specifies the name of the file containing the commands menu.
-	The default is `$HOME/tkSessionManager.menu`.
+	The default is `tkSessionManager.menu`.
  - __print-command__
 	Specifies the command to use to print the contents of the
 	session manager's text area.  Should be a command that can take
@@ -38,14 +39,14 @@ The configuration is in the GLIB database.  The Schema is
  - __pipe-name-suffix__
 	Specifies the name of the pipe created in the /tmp directory.
 	Text written to this pipe is displayed on the session manager's
-	text area.  The default is `${USER}_TkSessionManager`.
+	text area.  The default is `_TkSessionManager`.
  - __window-manager__
 	Specifies the path to the window manager program to start. 
-	Defaults to /usr/bin/fvwm.
+	Defaults to fvwm.
  - __session-script__
 	Session startup script to run.  This stript contains the
 	commands to start up the initial set of processes for the user's
-	session. The default is `$HOME/tkSessionManager.session`.
+	session. The default is `/bin/true`.
  - __panel__
        The name of a panel program to run.
  - __text-font__

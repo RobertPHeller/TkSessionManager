@@ -22,7 +22,7 @@ AllScripts = $(wildcard $(top_srcdir)/Scripts/*.tcl) $(wildcard Scripts/*.tcl)
 LibScripts = $(filter-out %TkSessionManager.tcl,$(AllScripts))
 AllImages  = $(wildcard $(top_srcdir)/Scripts/*.gif) \
 		$(wildcard $(top_srcdir)/Scripts/*.png)
-AllHelpDep = Doc/User/UserManual/UserManual.html
+AllHelpDep = Doc/User/UserManual/index.html
 AllHelpFiles = $(wildcard Doc/User/UserManual/*)
 
 TkSessionManager$(EXEEXT): $(AllScripts) $(AllImages) $(AllHelpDep) \

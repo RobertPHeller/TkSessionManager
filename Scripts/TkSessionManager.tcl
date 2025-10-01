@@ -244,7 +244,7 @@ namespace eval TKSessionManager {
   $helpmenu entryconfigure "Tutorial..." \
 	-command "::HTMLHelp::HTMLHelp help Tutorial"
 
-  ::HTMLHelp::HTMLHelp setDefaults "$::HelpDir" UserManualli1.html
+  ::HTMLHelp::HTMLHelp setDefaults "$::HelpDir" index.html
   # Center window on the screen and map it.
   update idle
   set w [winfo toplevel $Main]

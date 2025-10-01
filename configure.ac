@@ -9,7 +9,7 @@ AC_SUBST(build)
 AC_CANONICAL_TARGET
 AC_SUBST(target)
 
-AM_INIT_AUTOMAKE([TkSessionManager],1.1.0)
+AM_INIT_AUTOMAKE([TkSessionManager],1.1.1)
 if test "x${prefix}" = "xNONE"; then
     prefix=/usr/local
 fi
@@ -148,7 +148,8 @@ AC_CONFIG_FILES([Makefile \
 	  Scripts/Makefile \
 	  Doc/Makefile \
 		Doc/Support/Makefile \
-		Doc/User/Makefile
+		Doc/User/Makefile \
+		Doc/User/Doxyfile \
           SigTrap/Makefile \
           glib_tcl/Makefile \
           glib_schema/Makefile \
