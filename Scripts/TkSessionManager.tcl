@@ -300,7 +300,7 @@ proc TKSessionManager::AboutDialog {} {
     set about [toplevel .about -class About]
     wm overrideredirect .about 1
     wm withdraw .about
-    pack [ttk::label .about.header \
+    pack [label .about.header -padx 0 -pady 0 -borderwidth 0 \
           -image [image create photo \
                   -file [file join $::ImageDir DeepwoodsBanner.gif]]] \
     	-side top
@@ -309,7 +309,8 @@ proc TKSessionManager::AboutDialog {} {
           Version $TkSessionManager::VERSION
           Tcl version $::tcl_patchLevel
           Platform: $::tcl_platform(osVersion) $::tcl_platform(os) $::tcl_platform(machine)
-          By Robert Heller}] -aspect 500 \
+          By Robert Heller
+      }] -aspect 500 -padx 0 -pady 0 -borderwidth 0 \
             -background #242d2b -foreground white] \
          -side bottom -fill both -expand yes
     bind .about <1> {destroy .about}
