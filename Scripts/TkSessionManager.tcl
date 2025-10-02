@@ -139,8 +139,8 @@ package require SigTrap
 
 # Image Directory setup
 global ImageDir 
-set ImageDir [file join [file dirname [file dirname [info script]]] \
-                        Common]
+set ImageDir [file join [file dirname [file dirname [file dirname [info script]]]] \
+                        Images]
 # Help Directory setup
 global HelpDir
 set HelpDir [file join [file dirname [file dirname [file dirname \
@@ -231,6 +231,8 @@ namespace eval TKSessionManager {
   $helpmenu delete "Index..."  
   $helpmenu delete "On Context..."
   $helpmenu delete "On Window..."
+  $helpmenu insert "On Help..." command -label "About TkSessionManager" \
+        -underline 0 -command ::TKSessionManager::AboutDialog
   $helpmenu add command -label "Reference Manual" \
 		-command [list ::HTMLHelp::HTMLHelp help "Reference Manual"]
   $helpmenu entryconfigure "On Help..." \
@@ -289,6 +291,37 @@ namespace eval TKSessionManager {
   }
                             
   wm deiconify $w
+}
+
+package require Version
+
+proc TKSessionManager::AboutDialog {} {
+    if {[winfo exists .about]} {return}
+    set about [toplevel .about -class About]
+    wm overrideredirect .about 1
+    wm withdraw .about
+    pack [ttk::label .about.header \
+          -image [image create photo \
+                  -file [file join $::ImageDir DeepwoodsBanner.gif]]] \
+    	-side top
+    pack [message .about.message -text [subst {
+          TkSessionManager, an X11 Session manager
+          Version $TkSessionManager::VERSION
+          Tcl version $::tcl_patchLevel
+          Platform: $::tcl_platform(osVersion) $::tcl_platform(os) $::tcl_platform(machine)
+          By Robert Heller}] -aspect 500 \
+            -background #242d2b -foreground white] \
+         -side bottom -fill both -expand yes
+    bind .about <1> {destroy .about}
+    update idle
+    set width [winfo reqwidth .about]
+    set height [winfo reqheight .about]
+    set screenwidth [winfo screenwidth .about]
+    set screenheight [winfo screenheight .about]
+    set xpos [expr {($screenwidth - $width)/2}]
+    set ypos [expr {($screenheight - $height)/2}]
+    wm geometry .about [format {=%dx%d+%d+%d} $width $height  $xpos $ypos]
+    wm deiconify .about
 }
 
 #*************************************
