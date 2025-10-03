@@ -305,7 +305,7 @@ namespace eval TKSessionCommandMenu {
 			-selectcommand [mytypemethod _MenuSelectChanged]]
       
 
-      pack $menuTR -expand yes -fill both
+      #pack $menuTR -expand yes -fill both
       $menuTRscroll setwidget $menuTR
       set menuElementButtons [ButtonBox::create $frame.menuElementButtons \
 					-homogeneous yes -orient horizontal]
